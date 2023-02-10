@@ -32,7 +32,6 @@ kotlin {
     sourceSets {
         val ktorVersion = "2.2.3"
         val sqldelightVersion = "2.0.0-alpha05"
-        val kryptoVersion = "2.2.0"
 
         val commonMain by getting {
             dependencies {
@@ -43,7 +42,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("app.cash.sqldelight:runtime:$sqldelightVersion")
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
-                implementation("com.soywiz.korlibs.krypto:krypto:$kryptoVersion")
+                implementation("app.cash.sqldelight:primitive-adapters:$sqldelightVersion")
             }
         }
         val commonTest by getting {
@@ -55,7 +54,6 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
                 implementation("app.cash.sqldelight:android-driver:$sqldelightVersion")
-                implementation("com.soywiz.korlibs.krypto:krypto-android:$kryptoVersion")
             }
         }
         val androidUnitTest by getting
