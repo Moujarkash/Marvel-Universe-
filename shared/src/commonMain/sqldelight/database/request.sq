@@ -1,4 +1,4 @@
-import com.mod.marveluniverse.domain.entites.EntityType;
+import com.mod.marveluniverse.domain.entites.ResourceType;
 import com.mod.marveluniverse.domain.entites.RequestType;
 
 import kotlin.Int;
@@ -7,8 +7,8 @@ import kotlinx.datetime.LocalDateTime;
 CREATE TABLE requestEntity(
     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
     type TEXT AS RequestType NOT NULL,
-    entity TEXT AS EntityType NOT NULL,
-    entityId INTEGER AS Int,
+    resourceType TEXT AS ResourceType NOT NULL,
+    resourceId INTEGER AS Int,
     relatedEntity TEXT,
     query TEXT,
     totalResults INTEGER AS Int NOT NULL,
@@ -22,8 +22,8 @@ getRequest:
 SELECT *
 FROM requestEntity
 WHERE type = ? AND
-entity = ? AND
-entityId = ? AND
+resourceType = ? AND
+resourceId = ? AND
 relatedEntity = ? AND
 query = ?;
 
@@ -32,8 +32,8 @@ INSERT OR REPLACE
 INTO requestEntity(
     id,
     type,
-    entity,
-    entityId,
+    resourceType,
+    resourceId,
     relatedEntity,
     query,
     totalResults,

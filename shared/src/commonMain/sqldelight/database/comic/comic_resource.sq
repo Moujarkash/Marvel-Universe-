@@ -1,0 +1,77 @@
+import com.mod.marveluniverse.data.dtos.CharacterSummaryDto;
+import com.mod.marveluniverse.data.dtos.ComicDateDto;
+import com.mod.marveluniverse.data.dtos.ComicPriceDto;
+import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
+import com.mod.marveluniverse.data.dtos.CreatorSummaryDto;
+import com.mod.marveluniverse.data.dtos.EventSummaryDto;
+import com.mod.marveluniverse.data.dtos.ImageDto;
+import com.mod.marveluniverse.data.dtos.ResourceListDto;
+import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
+import com.mod.marveluniverse.data.dtos.StorySummaryDto;
+import com.mod.marveluniverse.data.dtos.TextObjectDto;
+import com.mod.marveluniverse.data.dtos.UrlDto;
+import com.mod.marveluniverse.domain.entites.ResourceType;
+import kotlin.Int;
+import kotlin.collections.List;
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE comicResourceEntity(
+        resourceType TEXT AS ResourceType NOT NULL,
+        resourceId INTEGER AS Int NOT NULL,
+        id INTEGER AS Int NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        modified TEXT AS LocalDateTime NOT NULL,
+        isbn TEXT NOT NULL,
+        pageCount INTEGER AS Int NOT NULL,
+        textObjects TEXT AS List<TextObjectDto> NOT NULL,
+        urls TEXT AS List<UrlDto> NOT NULL,
+        series TEXT AS SeriesSummaryDto NOT NULL,
+        variants TEXT AS List<ComicSummaryDto> NOT NULL,
+        dates TEXT AS List<ComicDateDto> NOT NULL,
+        prices TEXT AS List<ComicPriceDto> NOT NULL,
+        thumbnail TEXT AS ImageDto NOT NULL,
+        images TEXT AS List<ImageDto> NOT NULL,
+        creators TEXT AS ResourceListDto<CreatorSummaryDto> NOT NULL,
+        characters TEXT AS ResourceListDto<CharacterSummaryDto> NOT NULL,
+        stories TEXT AS ResourceListDto<StorySummaryDto> NOT NULL,
+        events TEXT AS ResourceListDto<EventSummaryDto> NOT NULL,
+
+        PRIMARY KEY (resourceType, resourceId, id)
+);
+
+getComicsResourceByType:
+SELECT  *
+FROM comicResourceEntity
+WHERE resourceType == ? AND resourceId == ?;
+
+insertComicResource:
+INSERT OR REPLACE
+INTO comicResourceEntity(
+    resourceType,
+    resourceId,
+    id,
+    title,
+    description,
+    modified,
+    isbn,
+    pageCount,
+    textObjects,
+    urls,
+    series,
+    variants,
+    dates,
+    prices,
+    thumbnail,
+    images,
+    creators,
+    characters,
+    stories,
+    events
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearComicsResource:
+DELETE
+FROM comicResourceEntity
+WHERE resourceType == ? AND resourceId == ?;

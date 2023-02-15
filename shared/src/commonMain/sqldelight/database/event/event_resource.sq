@@ -1,0 +1,68 @@
+import com.mod.marveluniverse.data.dtos.CharacterSummaryDto;
+import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
+import com.mod.marveluniverse.data.dtos.CreatorSummaryDto;
+import com.mod.marveluniverse.data.dtos.EventSummaryDto;
+import com.mod.marveluniverse.data.dtos.ImageDto;
+import com.mod.marveluniverse.data.dtos.ResourceListDto;
+import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
+import com.mod.marveluniverse.data.dtos.StorySummaryDto;
+import com.mod.marveluniverse.data.dtos.UrlDto;
+import com.mod.marveluniverse.domain.entites.ResourceType;
+import kotlin.Int;
+import kotlin.collections.List;
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE eventResourceEntity(
+resourceType TEXT AS ResourceType NOT NULL,
+    resourceId INTEGER AS Int NOT NULL,
+        id INTEGER AS Int NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        urls TEXT AS List<UrlDto> NOT NULL,
+        modified TEXT AS LocalDateTime NOT NULL,
+        start TEXT AS LocalDateTime NOT NULL,
+        end TEXT AS LocalDateTime NOT NULL,
+        thumbnail TEXT AS ImageDto NOT NULL,
+        comics TEXT AS ResourceListDto<ComicSummaryDto> NOT NULL,
+        series TEXT AS ResourceListDto<SeriesSummaryDto> NOT NULL,
+        stories TEXT AS ResourceListDto<StorySummaryDto> NOT NULL,
+        characters TEXT AS ResourceListDto<CharacterSummaryDto> NOT NULL,
+        creators TEXT AS ResourceListDto<CreatorSummaryDto> NOT NULL,
+        next TEXT AS EventSummaryDto,
+        previous TEXT AS EventSummaryDto,
+
+        PRIMARY KEY (resourceType, resourceId, id)
+);
+
+getEventsResourceByType:
+SELECT  *
+FROM eventResourceEntity
+WHERE resourceType == ? AND resourceId == ?;
+
+insertEventResource:
+INSERT OR REPLACE
+INTO eventResourceEntity(
+    resourceType,
+    resourceId,
+    id,
+        title,
+        description,
+        urls,
+        modified,
+        start,
+        end,
+        thumbnail,
+        comics,
+        series,
+        stories,
+        characters,
+        creators,
+        next,
+        previous
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearEventsResource:
+DELETE
+FROM eventResourceEntity
+WHERE resourceType == ? AND resourceId == ?;

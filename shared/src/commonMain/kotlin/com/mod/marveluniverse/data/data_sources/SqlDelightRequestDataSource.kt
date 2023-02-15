@@ -2,7 +2,7 @@ package com.mod.marveluniverse.data.data_sources
 
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
 import com.mod.marveluniverse.domain.data_sources.RequestDataSource
-import com.mod.marveluniverse.domain.entites.EntityType
+import com.mod.marveluniverse.domain.entites.ResourceType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
 import kotlinx.datetime.LocalDateTime
@@ -14,14 +14,14 @@ class SqlDelightRequestDataSource(
 
     override fun getRequest(
         type: RequestType,
-        entity: EntityType,
-        entityId: Int?,
+        resourceType: ResourceType,
+        resourceId: Int?,
         relatedEntity: String?,
         query: String?
     ): RequestEntity {
         return queries
             .getRequest(
-                type, entity, entityId, relatedEntity, query
+                type, resourceType, resourceId, relatedEntity, query
             )
             .executeAsOne()
     }
@@ -29,8 +29,8 @@ class SqlDelightRequestDataSource(
     override suspend fun insertRequest(
         id: Int?,
         type: RequestType,
-        entity: EntityType,
-        entityId: Int?,
+        resourceType: ResourceType,
+        resourceId: Int?,
         relatedEntity: String?,
         query: String?,
         totalResults: Int,
@@ -42,8 +42,8 @@ class SqlDelightRequestDataSource(
         queries.insertRequest(
             id,
             type,
-            entity,
-            entityId,
+            resourceType,
+            resourceId,
             relatedEntity,
             query,
             totalResults,

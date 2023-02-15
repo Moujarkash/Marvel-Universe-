@@ -1,0 +1,59 @@
+import com.mod.marveluniverse.data.dtos.CharacterSummaryDto;
+import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
+import com.mod.marveluniverse.data.dtos.CreatorSummaryDto;
+import com.mod.marveluniverse.data.dtos.EventSummaryDto;
+import com.mod.marveluniverse.data.dtos.ImageDto;
+import com.mod.marveluniverse.data.dtos.ResourceListDto;
+import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
+import com.mod.marveluniverse.domain.entites.ResourceType;
+import kotlin.Int;
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE storyResourceEntity(
+resourceType TEXT AS ResourceType NOT NULL,
+    resourceId INTEGER AS Int NOT NULL,
+     id INTEGER AS Int NOT NULL,
+     title TEXT NOT NULL,
+     description TEXT NOT NULL,
+     type TEXT NOT NULL,
+     modified TEXT AS LocalDateTime NOT NULL,
+     thumbnail TEXT AS ImageDto NOT NULL,
+     comics TEXT AS ResourceListDto<ComicSummaryDto> NOT NULL,
+     series TEXT AS ResourceListDto<SeriesSummaryDto> NOT NULL,
+     events TEXT AS ResourceListDto<EventSummaryDto> NOT NULL,
+     characters TEXT AS ResourceListDto<CharacterSummaryDto> NOT NULL,
+     creators TEXT AS ResourceListDto<CreatorSummaryDto> NOT NULL,
+     originalIssue TEXT AS ComicSummaryDto,
+
+             PRIMARY KEY (resourceType, resourceId, id)
+);
+
+getStoriesResourceByType:
+SELECT  *
+FROM storyResourceEntity
+WHERE resourceType == ? AND resourceId == ?;
+
+insertStoryResource:
+INSERT OR REPLACE
+INTO storyResourceEntity(
+    resourceType,
+    resourceId,
+     id,
+        title,
+        description,
+        type,
+        modified,
+        thumbnail,
+        comics,
+        series,
+        events,
+        characters,
+        creators,
+        originalIssue
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearStoriesResource:
+DELETE
+FROM storyResourceEntity
+WHERE resourceType == ? AND resourceId == ?;

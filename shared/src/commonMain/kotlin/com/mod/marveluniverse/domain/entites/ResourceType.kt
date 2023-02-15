@@ -1,6 +1,6 @@
 package com.mod.marveluniverse.domain.entites
 
-enum class EntityType {
+enum class ResourceType {
     CHARACTER,
     COMIC,
     CREATOR,
