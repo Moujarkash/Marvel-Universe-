@@ -5,6 +5,7 @@ import com.mod.marveluniverse.domain.data_sources.RequestDataSource
 import com.mod.marveluniverse.domain.entites.EntityType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
+import kotlinx.datetime.LocalDateTime
 
 class SqlDelightRequestDataSource(
     db: MarvelUniverseDatabase
@@ -35,8 +36,8 @@ class SqlDelightRequestDataSource(
         totalResults: Int,
         offset: Int?,
         etag: String,
-        createdAt: Int,
-        updatedAt: Int
+        createdAt: LocalDateTime,
+        updatedAt: LocalDateTime
     ) {
         queries.insertRequest(
             id,

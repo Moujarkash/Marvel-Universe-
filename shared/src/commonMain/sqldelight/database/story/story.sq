@@ -1,0 +1,54 @@
+import com.mod.marveluniverse.data.dtos.CharacterSummaryDto;
+import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
+import com.mod.marveluniverse.data.dtos.CreatorSummaryDto;
+import com.mod.marveluniverse.data.dtos.EventSummaryDto;
+import com.mod.marveluniverse.data.dtos.ImageDto;
+import com.mod.marveluniverse.data.dtos.ResourceListDto;
+import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
+import kotlin.Int;
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE storyEntity(
+     id INTEGER AS Int NOT NULL PRIMARY KEY,
+     title TEXT NOT NULL,
+     description TEXT NOT NULL,
+     type TEXT NOT NULL,
+     modified TEXT AS LocalDateTime NOT NULL,
+     thumbnail TEXT AS ImageDto NOT NULL,
+     comics TEXT AS ResourceListDto<ComicSummaryDto> NOT NULL,
+     series TEXT AS ResourceListDto<SeriesSummaryDto> NOT NULL,
+     events TEXT AS ResourceListDto<EventSummaryDto> NOT NULL,
+     characters TEXT AS ResourceListDto<CharacterSummaryDto> NOT NULL,
+     creators TEXT AS ResourceListDto<CreatorSummaryDto> NOT NULL,
+     originalIssue TEXT AS ComicSummaryDto
+);
+
+getStoryById:
+SELECT  *
+FROM storyEntity
+WHERE id == ?;
+
+getStories:
+SELECT *
+FROM storyEntity;
+
+insertStory:
+INSERT OR REPLACE
+INTO storyEntity(
+    id,
+    title,
+    description,
+    type,
+    modified,
+    thumbnail,
+    comics,
+    series,
+    events,
+    characters,
+    creators,
+    originalIssue
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearStories:
+DELETE FROM storyEntity;

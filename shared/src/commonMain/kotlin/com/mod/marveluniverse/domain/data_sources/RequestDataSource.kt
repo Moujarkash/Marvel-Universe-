@@ -3,6 +3,7 @@ package com.mod.marveluniverse.domain.data_sources
 import com.mod.marveluniverse.domain.entites.EntityType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
+import kotlinx.datetime.LocalDateTime
 
 interface RequestDataSource {
     fun getRequest(
@@ -23,7 +24,7 @@ interface RequestDataSource {
         totalResults: Int,
         offset: Int?,
         etag: String,
-        createdAt: Int,
-        updatedAt: Int,
+        createdAt: LocalDateTime,
+        updatedAt: LocalDateTime,
     )
 }

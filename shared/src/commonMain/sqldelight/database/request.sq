@@ -2,6 +2,7 @@ import com.mod.marveluniverse.domain.entites.EntityType;
 import com.mod.marveluniverse.domain.entites.RequestType;
 
 import kotlin.Int;
+import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE requestEntity(
     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -13,8 +14,8 @@ CREATE TABLE requestEntity(
     totalResults INTEGER AS Int NOT NULL,
     offset INTEGER AS Int,
     etag TEXT NOT NULL,
-    createdAt INTEGER AS Int NOT NULL,
-    updatedAt INTEGER AS Int NOT NULL
+    createdAt TEXT AS LocalDateTime NOT NULL,
+    updatedAt TEXT AS LocalDateTime NOT NULL
 );
 
 getRequest:
