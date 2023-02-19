@@ -12,11 +12,11 @@ data class Series(
     val rating: String,
     val modified: LocalDateTime,
     val thumbnail: Image,
-    val comics: ResourceList<ComicSummary>,
-    val stories: ResourceList<StorySummary>,
-    val events: ResourceList<EventSummary>,
-    val characters: ResourceList<CharacterSummary>,
-    val creators: ResourceList<CreatorSummary>,
+    val comics: ComicsResourceList,
+    val stories: StoriesResourceList,
+    val events: EventsResourceList,
+    val characters: CharactersResourceList,
+    val creators: CreatorsResourceList,
     val next: SeriesSummary?,
     val previous: SeriesSummary?
 )

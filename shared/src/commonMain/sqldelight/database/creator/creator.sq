@@ -1,9 +1,8 @@
-import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
-import com.mod.marveluniverse.data.dtos.EventSummaryDto;
+import com.mod.marveluniverse.data.dtos.ComicsResourceListDto;
+import com.mod.marveluniverse.data.dtos.EventsResourceListDto;
 import com.mod.marveluniverse.data.dtos.ImageDto;
-import com.mod.marveluniverse.data.dtos.ResourceListDto;
-import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
-import com.mod.marveluniverse.data.dtos.StorySummaryDto;
+import com.mod.marveluniverse.data.dtos.SeriesResourceListDto;
+import com.mod.marveluniverse.data.dtos.StoriesResourceListDto;
 import com.mod.marveluniverse.data.dtos.UrlDto;
 import kotlin.Int;
 import kotlin.collections.List;
@@ -19,10 +18,10 @@ CREATE TABLE creatorEntity(
     modified TEXT AS LocalDateTime NOT NULL,
     urls TEXT AS List<UrlDto> NOT NULL,
     thumbnail TEXT AS ImageDto NOT NULL,
-    comics TEXT AS ResourceListDto<ComicSummaryDto> NOT NULL,
-    series TEXT AS ResourceListDto<SeriesSummaryDto> NOT NULL,
-    stories TEXT AS ResourceListDto<StorySummaryDto> NOT NULL,
-    events TEXT AS ResourceListDto<EventSummaryDto> NOT NULL
+    comics TEXT AS ComicsResourceListDto NOT NULL,
+    series TEXT AS SeriesResourceListDto NOT NULL,
+    stories TEXT AS StoriesResourceListDto NOT NULL,
+    events TEXT AS EventsResourceListDto NOT NULL
 );
 
 getCreatorById:

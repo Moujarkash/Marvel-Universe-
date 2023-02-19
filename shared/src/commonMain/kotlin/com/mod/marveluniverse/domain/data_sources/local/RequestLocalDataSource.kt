@@ -1,11 +1,11 @@
-package com.mod.marveluniverse.domain.data_sources
+package com.mod.marveluniverse.domain.data_sources.local
 
 import com.mod.marveluniverse.domain.entites.ResourceType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
 import kotlinx.datetime.LocalDateTime
 
-interface RequestDataSource {
+interface RequestLocalDataSource {
     fun getRequest(
         type: RequestType,
         resourceType: ResourceType,

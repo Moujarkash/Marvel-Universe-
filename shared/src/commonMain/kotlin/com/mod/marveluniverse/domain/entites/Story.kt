@@ -9,10 +9,10 @@ data class Story(
     val type: String,
     val modified: LocalDateTime,
     val thumbnail: Image,
-    val comics: ResourceList<ComicSummary>,
-    val series: ResourceList<SeriesSummary>,
-    val events: ResourceList<EventSummary>,
-    val characters: ResourceList<CharacterSummary>,
-    val creators: ResourceList<CreatorSummary>,
+    val comics: ComicsResourceList,
+    val series: SeriesResourceList,
+    val events: EventsResourceList,
+    val characters: CharactersResourceList,
+    val creators: CreatorsResourceList,
     val originalIssue: ComicSummary?
 )

@@ -19,8 +19,8 @@ data class ComicDto(
     val prices: List<ComicPriceDto>,
     val thumbnail: ImageDto,
     val images: List<ImageDto>,
-    val creators: ResourceListDto<CreatorSummaryDto>,
-    val characters: ResourceListDto<CharacterSummaryDto>,
-    val stories: ResourceListDto<StorySummaryDto>,
-    val events: ResourceListDto<EventSummaryDto>
+    val creators: CreatorsResourceListDto,
+    val characters: CharactersResourceListDto,
+    val stories: StoriesResourceListDto,
+    val events: EventsResourceListDto
 )

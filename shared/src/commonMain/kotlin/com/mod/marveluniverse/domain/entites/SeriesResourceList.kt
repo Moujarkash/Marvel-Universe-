@@ -1,8 +1,8 @@
 package com.mod.marveluniverse.domain.entites
 
-data class ResourceList<T>(
+data class SeriesResourceList(
     val available: Int,
     val returned: Int,
     val collectionURI: String,
-    val items: List<T>
+    val items: List<SeriesSummary>
 )

@@ -1,11 +1,10 @@
-import com.mod.marveluniverse.data.dtos.CharacterSummaryDto;
-import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
-import com.mod.marveluniverse.data.dtos.CreatorSummaryDto;
+import com.mod.marveluniverse.data.dtos.CharactersResourceListDto;
+import com.mod.marveluniverse.data.dtos.ComicsResourceListDto;
+import com.mod.marveluniverse.data.dtos.CreatorsResourceListDto;
 import com.mod.marveluniverse.data.dtos.EventSummaryDto;
 import com.mod.marveluniverse.data.dtos.ImageDto;
-import com.mod.marveluniverse.data.dtos.ResourceListDto;
-import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
-import com.mod.marveluniverse.data.dtos.StorySummaryDto;
+import com.mod.marveluniverse.data.dtos.SeriesResourceListDto;
+import com.mod.marveluniverse.data.dtos.StoriesResourceListDto;
 import com.mod.marveluniverse.data.dtos.UrlDto;
 import com.mod.marveluniverse.domain.entites.ResourceType;
 import kotlin.Int;
@@ -23,11 +22,11 @@ resourceType TEXT AS ResourceType NOT NULL,
         start TEXT AS LocalDateTime NOT NULL,
         end TEXT AS LocalDateTime NOT NULL,
         thumbnail TEXT AS ImageDto NOT NULL,
-        comics TEXT AS ResourceListDto<ComicSummaryDto> NOT NULL,
-        series TEXT AS ResourceListDto<SeriesSummaryDto> NOT NULL,
-        stories TEXT AS ResourceListDto<StorySummaryDto> NOT NULL,
-        characters TEXT AS ResourceListDto<CharacterSummaryDto> NOT NULL,
-        creators TEXT AS ResourceListDto<CreatorSummaryDto> NOT NULL,
+        comics TEXT AS ComicsResourceListDto NOT NULL,
+        series TEXT AS SeriesResourceListDto NOT NULL,
+        stories TEXT AS StoriesResourceListDto NOT NULL,
+        characters TEXT AS CharactersResourceListDto NOT NULL,
+        creators TEXT AS CreatorsResourceListDto NOT NULL,
         next TEXT AS EventSummaryDto,
         previous TEXT AS EventSummaryDto,
 

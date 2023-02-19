@@ -1,4 +1,4 @@
-package com.mod.marveluniverse.data.data_sources
+package com.mod.marveluniverse.data.data_sources.remote
 
 import com.mod.marveluniverse.data.dtos.ErrorDto
 import com.mod.marveluniverse.domain.error.AppException

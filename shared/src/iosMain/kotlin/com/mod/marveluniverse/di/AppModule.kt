@@ -2,11 +2,13 @@ package com.mod.marveluniverse.di
 
 import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
-import com.mod.marveluniverse.data.data_sources.SqlDelightRequestDataSource
+import com.mod.marveluniverse.data.data_sources.local.RequestLocalDataSourceImpl
 import com.mod.marveluniverse.data.config.DatabaseDriverFactory
+import com.mod.marveluniverse.data.data_sources.local.ComicLocalDataSourceImpl
 import com.mod.marveluniverse.data.db_adapters.*
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
-import com.mod.marveluniverse.domain.data_sources.RequestDataSource
+import com.mod.marveluniverse.domain.data_sources.local.ComicLocalDataSource
+import com.mod.marveluniverse.domain.data_sources.local.RequestLocalDataSource
 import com.mod.marveluniverse.domain.entites.ResourceType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
@@ -208,8 +210,14 @@ class AppModule {
         )
     }
 
-    val requestDataSource: RequestDataSource by lazy {
-        SqlDelightRequestDataSource(
+    val requestLocalDataSource: RequestLocalDataSource by lazy {
+        RequestLocalDataSourceImpl(
+            db = appDatabase
+        )
+    }
+
+    val comicLocalDataSource: ComicLocalDataSource by lazy {
+        ComicLocalDataSourceImpl(
             db = appDatabase
         )
     }

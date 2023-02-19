@@ -11,11 +11,11 @@ data class Event(
     val start: LocalDateTime,
     val end: LocalDateTime,
     val thumbnail: Image,
-    val comics: ResourceList<ComicSummary>,
-    val stories: ResourceList<StorySummary>,
-    val series: ResourceList<SeriesSummary>,
-    val characters: ResourceList<CharacterSummary>,
-    val creators: ResourceList<CreatorSummary>,
+    val comics: ComicsResourceList,
+    val stories: StoriesResourceList,
+    val series: SeriesResourceList,
+    val characters: CharactersResourceList,
+    val creators: CreatorsResourceList,
     val next: EventSummary?,
     val previous: EventSummary?
 )

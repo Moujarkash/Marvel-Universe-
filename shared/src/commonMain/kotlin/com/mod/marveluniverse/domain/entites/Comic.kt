@@ -17,8 +17,8 @@ data class Comic(
     val prices: List<ComicPrice>,
     val thumbnail: Image,
     val images: List<Image>,
-    val creators: ResourceList<CreatorSummary>,
-    val characters: ResourceList<CharacterSummary>,
-    val stories: ResourceList<StorySummary>,
-    val events: ResourceList<EventSummary>
+    val creators: CreatorsResourceList,
+    val characters: CharactersResourceList,
+    val stories: StoriesResourceList,
+    val events: EventsResourceList
 )

@@ -12,8 +12,8 @@ data class Creator(
     val modified: LocalDateTime,
     val urls: List<Url>,
     val thumbnail: Image,
-    val series: ResourceList<SeriesSummary>,
-    val stories: ResourceList<StorySummary>,
-    val comics: ResourceList<ComicSummary>,
-    val events: ResourceList<EventSummary>
+    val series: SeriesResourceList,
+    val stories: StoriesResourceList,
+    val comics: ComicsResourceList,
+    val events: EventsResourceList
 )

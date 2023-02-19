@@ -11,10 +11,10 @@ data class StoryDto(
     val type: String,
     val modified: LocalDateTime,
     val thumbnail: ImageDto,
-    val comics: ResourceListDto<ComicSummaryDto>,
-    val series: ResourceListDto<SeriesSummaryDto>,
-    val events: ResourceListDto<EventSummaryDto>,
-    val characters: ResourceListDto<CharacterSummaryDto>,
-    val creators: ResourceListDto<CreatorSummaryDto>,
+    val comics: ComicsResourceListDto,
+    val series: SeriesResourceListDto,
+    val events: EventsResourceListDto,
+    val characters: CharactersResourceListDto,
+    val creators: CreatorsResourceListDto,
     val originalIssue: ComicSummaryDto?
 )

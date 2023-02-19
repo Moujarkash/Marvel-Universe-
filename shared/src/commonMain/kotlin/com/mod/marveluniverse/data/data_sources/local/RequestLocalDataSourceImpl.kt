@@ -1,15 +1,15 @@
-package com.mod.marveluniverse.data.data_sources
+package com.mod.marveluniverse.data.data_sources.local
 
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
-import com.mod.marveluniverse.domain.data_sources.RequestDataSource
+import com.mod.marveluniverse.domain.data_sources.local.RequestLocalDataSource
 import com.mod.marveluniverse.domain.entites.ResourceType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
 import kotlinx.datetime.LocalDateTime
 
-class SqlDelightRequestDataSource(
+class RequestLocalDataSourceImpl(
     db: MarvelUniverseDatabase
-) : RequestDataSource {
+) : RequestLocalDataSource {
     private val queries = db.requestQueries
 
     override fun getRequest(

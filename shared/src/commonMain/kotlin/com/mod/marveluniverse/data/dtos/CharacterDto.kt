@@ -11,8 +11,8 @@ data class CharacterDto(
     val modified: LocalDateTime,
     val urls: List<UrlDto>,
     val thumbnail: ImageDto,
-    val comics: ResourceListDto<ComicSummaryDto>,
-    val stories: ResourceListDto<StorySummaryDto>,
-    val events: ResourceListDto<EventSummaryDto>,
-    val series: ResourceListDto<SeriesSummaryDto>
+    val comics: ComicsResourceListDto,
+    val stories: StoriesResourceListDto,
+    val events: EventsResourceListDto,
+    val series: SeriesResourceListDto
 )

@@ -14,8 +14,8 @@ data class CreatorDto(
     val modified: LocalDateTime,
     val urls: List<UrlDto>,
     val thumbnail: ImageDto,
-    val series: ResourceListDto<SeriesSummaryDto>,
-    val stories: ResourceListDto<StorySummaryDto>,
-    val comics: ResourceListDto<ComicSummaryDto>,
-    val events: ResourceListDto<EventSummaryDto>
+    val series: SeriesResourceListDto,
+    val stories: StoriesResourceListDto,
+    val comics: ComicsResourceListDto,
+    val events: EventsResourceListDto
 )

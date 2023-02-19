@@ -9,8 +9,8 @@ data class Character(
     val modified: LocalDateTime,
     val urls: List<Url>,
     val thumbnail: Image,
-    val comics: ResourceList<ComicSummary>,
-    val stories: ResourceList<StorySummary>,
-    val events: ResourceList<EventSummary>,
-    val series: ResourceList<SeriesSummary>
+    val comics: ComicsResourceList,
+    val stories: StoriesResourceList,
+    val events: EventsResourceList,
+    val series: SeriesResourceList
 )

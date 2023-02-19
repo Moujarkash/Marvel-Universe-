@@ -1,11 +1,10 @@
-import com.mod.marveluniverse.data.dtos.CharacterSummaryDto;
-import com.mod.marveluniverse.data.dtos.ComicSummaryDto;
-import com.mod.marveluniverse.data.dtos.CreatorSummaryDto;
-import com.mod.marveluniverse.data.dtos.EventSummaryDto;
+import com.mod.marveluniverse.data.dtos.CharactersResourceListDto;
+import com.mod.marveluniverse.data.dtos.ComicsResourceListDto;
+import com.mod.marveluniverse.data.dtos.CreatorsResourceListDto;
+import com.mod.marveluniverse.data.dtos.EventsResourceListDto;
 import com.mod.marveluniverse.data.dtos.ImageDto;
-import com.mod.marveluniverse.data.dtos.ResourceListDto;
 import com.mod.marveluniverse.data.dtos.SeriesSummaryDto;
-import com.mod.marveluniverse.data.dtos.StorySummaryDto;
+import com.mod.marveluniverse.data.dtos.StoriesResourceListDto;
 import com.mod.marveluniverse.data.dtos.UrlDto;
 import kotlin.Int;
 import kotlin.collections.List;
@@ -21,11 +20,11 @@ CREATE TABLE seriesEntity(
     modified TEXT AS LocalDateTime NOT NULL,
     urls TEXT AS List<UrlDto> NOT NULL,
     thumbnail TEXT AS ImageDto NOT NULL,
-    comics TEXT AS ResourceListDto<ComicSummaryDto> NOT NULL,
-    stories TEXT AS ResourceListDto<StorySummaryDto> NOT NULL,
-    events TEXT AS ResourceListDto<EventSummaryDto> NOT NULL,
-    characters TEXT AS ResourceListDto<CharacterSummaryDto> NOT NULL,
-    creators TEXT AS ResourceListDto<CreatorSummaryDto> NOT NULL,
+    comics TEXT AS ComicsResourceListDto NOT NULL,
+    stories TEXT AS StoriesResourceListDto NOT NULL,
+    events TEXT AS EventsResourceListDto NOT NULL,
+    characters TEXT AS CharactersResourceListDto NOT NULL,
+    creators TEXT AS CreatorsResourceListDto NOT NULL,
     next TEXT AS SeriesSummaryDto,
     previous TEXT AS SeriesSummaryDto
 );
