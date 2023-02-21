@@ -22,6 +22,7 @@ abstract class BaseRemoteDataSource {
                 val serverError = response.body<ErrorDto>()
                 throw AppException(errorType = ErrorType.CLIENT_ERROR, errorMessage = serverError.message)
             }
+            304 -> throw AppException(errorType = ErrorType.DATA_NOT_CHANGED_ON_SERVER)
             else -> throw AppException(errorType = ErrorType.UNKNOWN_ERROR)
         }
 

@@ -12,14 +12,16 @@ interface SeriesRemoteDataSource {
     suspend fun fetchSeries(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<SeriesDto>>
 
     suspend fun fetchSeriesByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<SeriesDto>>
 }
 
@@ -29,12 +31,16 @@ class SeriesRemoteDataSourceImpl(
     override suspend fun fetchSeries(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<SeriesDto>> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/series")
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
@@ -47,7 +53,8 @@ class SeriesRemoteDataSourceImpl(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<SeriesDto>> {
         return processRequest(
             request = {
@@ -57,6 +64,9 @@ class SeriesRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/series"
                     )
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->

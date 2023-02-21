@@ -12,14 +12,16 @@ interface EventRemoteDataSource {
     suspend fun fetchEvents(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<EventDto>>
 
     suspend fun fetchEventsByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<EventDto>>
 }
 
@@ -29,12 +31,16 @@ class EventRemoteDataSourceImpl(
     override suspend fun fetchEvents(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<EventDto>> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/events")
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
@@ -47,7 +53,8 @@ class EventRemoteDataSourceImpl(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<EventDto>> {
         return processRequest(
             request = {
@@ -57,6 +64,9 @@ class EventRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/events"
                     )
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->

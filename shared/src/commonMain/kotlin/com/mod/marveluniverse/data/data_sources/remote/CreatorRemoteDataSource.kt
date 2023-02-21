@@ -12,14 +12,16 @@ interface CreatorRemoteDataSource {
     suspend fun fetchCreators(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CreatorDto>>
 
     suspend fun fetchCreatorsByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CreatorDto>>
 }
 
@@ -29,12 +31,16 @@ class CreatorRemoteDataSourceImpl(
     override suspend fun fetchCreators(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CreatorDto>> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/creators")
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
@@ -47,7 +53,8 @@ class CreatorRemoteDataSourceImpl(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CreatorDto>> {
         return processRequest(
             request = {
@@ -57,6 +64,9 @@ class CreatorRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/creators"
                     )
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->

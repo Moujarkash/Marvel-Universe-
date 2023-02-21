@@ -12,14 +12,16 @@ interface StoryRemoteDataSource {
     suspend fun fetchStories(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<StoryDto>>
 
     suspend fun fetchStoriesByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<StoryDto>>
 }
 
@@ -29,12 +31,16 @@ class StoryRemoteDataSourceImpl(
     override suspend fun fetchStories(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<StoryDto>> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/stories")
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
@@ -47,7 +53,8 @@ class StoryRemoteDataSourceImpl(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<StoryDto>> {
         return processRequest(
             request = {
@@ -57,6 +64,9 @@ class StoryRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/stories"
                     )
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->

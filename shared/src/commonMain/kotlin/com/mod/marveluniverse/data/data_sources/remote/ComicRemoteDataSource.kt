@@ -12,14 +12,16 @@ interface ComicRemoteDataSource {
     suspend fun fetchComics(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<ComicDto>>
 
     suspend fun fetchComicsByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<ComicDto>>
 }
 
@@ -29,12 +31,16 @@ class ComicRemoteDataSourceImpl(
     override suspend fun fetchComics(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<ComicDto>> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/comics")
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
@@ -47,7 +53,8 @@ class ComicRemoteDataSourceImpl(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<ComicDto>> {
         return processRequest(
             request = {
@@ -57,6 +64,9 @@ class ComicRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/comics"
                     )
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->

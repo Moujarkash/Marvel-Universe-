@@ -12,14 +12,16 @@ interface CharacterRemoteDataSource {
     suspend fun fetchCharacters(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CharacterDto>>
 
     suspend fun fetchCharactersByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CharacterDto>>
 }
 
@@ -29,12 +31,16 @@ class CharacterRemoteDataSourceImpl(
     override suspend fun fetchCharacters(
         query: String?,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CharacterDto>> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/characters")
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
@@ -47,7 +53,8 @@ class CharacterRemoteDataSourceImpl(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
-        offset: Int
+        offset: Int,
+        etag: String?
     ): ResponseWrapperDto<List<CharacterDto>> {
         return processRequest(
             request = {
@@ -57,6 +64,9 @@ class CharacterRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/characters"
                     )
+                    etag?.let {
+                        header("If-None-Match", it)
+                    }
                 }
             },
             onSuccess = { httpResponse ->
