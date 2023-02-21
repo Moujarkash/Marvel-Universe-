@@ -3,7 +3,7 @@ package com.mod.marveluniverse.data.dtos
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DataDto<T>(
+data class DataWrapperDto<T>(
     val offset: Int,
     val limit: Int,
     val total: Int,

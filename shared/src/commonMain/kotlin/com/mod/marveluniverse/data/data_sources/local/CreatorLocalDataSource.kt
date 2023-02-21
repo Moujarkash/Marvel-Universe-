@@ -1,56 +1,92 @@
 package com.mod.marveluniverse.data.data_sources.local
 
 import app.cash.sqldelight.coroutines.asFlow
-import com.mod.marveluniverse.data.mappers.toDataDto
-import com.mod.marveluniverse.data.mappers.toDomainEntity
+import com.mod.marveluniverse.data.dtos.*
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
-import com.mod.marveluniverse.domain.data_sources.local.CreatorLocalDataSource
-import com.mod.marveluniverse.domain.entites.*
-import com.mod.marveluniverse.domain.utils.flows.CommonFlow
-import com.mod.marveluniverse.domain.utils.flows.toCommonFlow
+import com.mod.marveluniverse.domain.entites.ResourceType
+import database.creator.CreatorEntity
+import database.creator.CreatorResourceEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
 
+interface CreatorLocalDataSource {
+    fun getCreators(): Flow<List<CreatorEntity>>
+    fun getCreatorById(id: Int): CreatorEntity
+    fun getCreatorsByResource(
+        resourceType: ResourceType,
+        resourceId: Int
+    ): Flow<List<CreatorResourceEntity>>
+
+    fun insertCreator(
+        id: Int,
+        firstName: String,
+        middleName: String,
+        lastName: String,
+        suffix: String,
+        fullName: String,
+        modified: LocalDateTime,
+        urls: List<UrlDto>,
+        thumbnail: ImageDto,
+        comics: ComicsResourceListDto,
+        series: SeriesResourceListDto,
+        stories: StoriesResourceListDto,
+        events: EventsResourceListDto
+    )
+
+    fun insertCreatorResource(
+        resourceType: ResourceType,
+        resourceId: Int,
+        id: Int,
+        firstName: String,
+        middleName: String,
+        lastName: String,
+        suffix: String,
+        fullName: String,
+        modified: LocalDateTime,
+        urls: List<UrlDto>,
+        thumbnail: ImageDto,
+        comics: ComicsResourceListDto,
+        series: SeriesResourceListDto,
+        stories: StoriesResourceListDto,
+        events: EventsResourceListDto
+    )
+
+    fun clearCreators()
+    fun clearCreatorsResource(resourceType: ResourceType, resourceId: Int)
+}
+
 class CreatorLocalDataSourceImpl(
     db: MarvelUniverseDatabase
-): CreatorLocalDataSource {
+) : CreatorLocalDataSource {
     private val creatorQueries = db.creatorQueries
     private val creatorResourceQueries = db.creator_resourceQueries
 
-    override fun getCreators(): CommonFlow<List<Creator>> {
+    override fun getCreators(): Flow<List<CreatorEntity>> {
         return creatorQueries
             .getCreators()
             .asFlow()
             .map { query ->
                 query.executeAsList()
             }
-            .map { comics ->
-                comics.map { it.toDomainEntity() }
-            }
-            .toCommonFlow()
     }
 
-    override fun getCreatorById(id: Int): Creator {
+    override fun getCreatorById(id: Int): CreatorEntity {
         return creatorQueries
             .getCreatorById(id)
             .executeAsOne()
-            .toDomainEntity()
     }
 
     override fun getCreatorsByResource(
         resourceType: ResourceType,
         resourceId: Int
-    ): CommonFlow<List<Creator>> {
+    ): Flow<List<CreatorResourceEntity>> {
         return creatorResourceQueries
             .getCreatorsResourceByType(resourceType, resourceId)
             .asFlow()
             .map { query ->
                 query.executeAsList()
             }
-            .map { comics ->
-                comics.map { it.toDomainEntity() }
-            }
-            .toCommonFlow()
     }
 
     override fun insertCreator(
@@ -61,12 +97,12 @@ class CreatorLocalDataSourceImpl(
         suffix: String,
         fullName: String,
         modified: LocalDateTime,
-        urls: List<Url>,
-        thumbnail: Image,
-        comics: ComicsResourceList,
-        series: SeriesResourceList,
-        stories: StoriesResourceList,
-        events: EventsResourceList
+        urls: List<UrlDto>,
+        thumbnail: ImageDto,
+        comics: ComicsResourceListDto,
+        series: SeriesResourceListDto,
+        stories: StoriesResourceListDto,
+        events: EventsResourceListDto
     ) {
         creatorQueries
             .insertCreator(
@@ -77,12 +113,12 @@ class CreatorLocalDataSourceImpl(
                 suffix = suffix,
                 fullName = fullName,
                 modified = modified,
-                urls = urls.map { it.toDataDto() },
-                thumbnail = thumbnail.toDataDto(),
-                comics = comics.toDataDto(),
-                series = series.toDataDto(),
-                stories = stories.toDataDto(),
-                events = events.toDataDto()
+                urls = urls,
+                thumbnail = thumbnail,
+                comics = comics,
+                series = series,
+                stories = stories,
+                events = events
             )
     }
 
@@ -96,12 +132,12 @@ class CreatorLocalDataSourceImpl(
         suffix: String,
         fullName: String,
         modified: LocalDateTime,
-        urls: List<Url>,
-        thumbnail: Image,
-        comics: ComicsResourceList,
-        series: SeriesResourceList,
-        stories: StoriesResourceList,
-        events: EventsResourceList
+        urls: List<UrlDto>,
+        thumbnail: ImageDto,
+        comics: ComicsResourceListDto,
+        series: SeriesResourceListDto,
+        stories: StoriesResourceListDto,
+        events: EventsResourceListDto
     ) {
         creatorResourceQueries
             .insertCreatorResource(
@@ -114,12 +150,12 @@ class CreatorLocalDataSourceImpl(
                 suffix = suffix,
                 fullName = fullName,
                 modified = modified,
-                urls = urls.map { it.toDataDto() },
-                thumbnail = thumbnail.toDataDto(),
-                comics = comics.toDataDto(),
-                series = series.toDataDto(),
-                stories = stories.toDataDto(),
-                events = events.toDataDto()
+                urls = urls,
+                thumbnail = thumbnail,
+                comics = comics,
+                series = series,
+                stories = stories,
+                events = events
             )
     }
 

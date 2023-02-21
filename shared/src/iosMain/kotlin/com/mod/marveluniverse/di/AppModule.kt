@@ -2,13 +2,12 @@ package com.mod.marveluniverse.di
 
 import app.cash.sqldelight.EnumColumnAdapter
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
-import com.mod.marveluniverse.data.data_sources.local.RequestLocalDataSourceImpl
 import com.mod.marveluniverse.data.config.DatabaseDriverFactory
-import com.mod.marveluniverse.data.data_sources.local.ComicLocalDataSourceImpl
+import com.mod.marveluniverse.data.config.HttpClientFactory
+import com.mod.marveluniverse.data.data_sources.local.*
+import com.mod.marveluniverse.data.data_sources.remote.*
 import com.mod.marveluniverse.data.db_adapters.*
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
-import com.mod.marveluniverse.domain.data_sources.local.ComicLocalDataSource
-import com.mod.marveluniverse.domain.data_sources.local.RequestLocalDataSource
 import com.mod.marveluniverse.domain.entites.ResourceType
 import com.mod.marveluniverse.domain.entites.RequestType
 import database.RequestEntity
@@ -219,6 +218,72 @@ class AppModule {
     val comicLocalDataSource: ComicLocalDataSource by lazy {
         ComicLocalDataSourceImpl(
             db = appDatabase
+        )
+    }
+
+    val characterLocalDataSource: CharacterLocalDataSource by lazy {
+        CharacterLocalDataSourceImpl(
+            db = appDatabase
+        )
+    }
+
+    val creatorLocalDataSource: CreatorLocalDataSource by lazy {
+        CreatorLocalDataSourceImpl(
+            db = appDatabase
+        )
+    }
+
+    val eventLocalDataSource: EventLocalDataSource by lazy {
+        EventLocalDataSourceImpl(
+            db = appDatabase
+        )
+    }
+
+    val seriesLocalDataSource: SeriesLocalDataSource by lazy {
+        SeriesLocalDataSourceImpl(
+            db = appDatabase
+        )
+    }
+
+    val storyLocalDataSource: StoryLocalDataSource by lazy {
+        StoryLocalDataSourceImpl(
+            db = appDatabase
+        )
+    }
+
+    val comicRemoteDataSource: ComicRemoteDataSource by lazy {
+        ComicRemoteDataSourceImpl(
+            httpClient = HttpClientFactory().create()
+        )
+    }
+
+    val characterRemoteDataSource: CharacterRemoteDataSource by lazy {
+        CharacterRemoteDataSourceImpl(
+            httpClient = HttpClientFactory().create()
+        )
+    }
+
+    val creatorRemoteDataSource: CreatorRemoteDataSource by lazy {
+        CreatorRemoteDataSourceImpl(
+            httpClient = HttpClientFactory().create()
+        )
+    }
+
+    val eventRemoteDataSource: EventRemoteDataSource by lazy {
+        EventRemoteDataSourceImpl(
+            httpClient = HttpClientFactory().create()
+        )
+    }
+
+    val seriesRemoteDataSource: SeriesRemoteDataSource by lazy {
+        SeriesRemoteDataSourceImpl(
+            httpClient = HttpClientFactory().create()
+        )
+    }
+
+    val storyRemoteDataSource: StoryRemoteDataSource by lazy {
+        StoryRemoteDataSourceImpl(
+            httpClient = HttpClientFactory().create()
         )
     }
 }
