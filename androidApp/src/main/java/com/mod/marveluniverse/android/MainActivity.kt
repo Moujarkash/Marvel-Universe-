@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mod.marveluniverse.Greeting
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            ApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -34,7 +36,7 @@ fun GreetingView(text: String) {
 @Preview
 @Composable
 fun DefaultPreview() {
-    MyApplicationTheme {
+    ApplicationTheme {
         GreetingView("Hello, Android!")
     }
 }

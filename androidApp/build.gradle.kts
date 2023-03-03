@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -46,4 +48,13 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.3.1")
     implementation("androidx.compose.material:material:1.3.1")
     implementation("androidx.activity:activity-compose:1.6.1")
+
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+    implementation("io.ktor:ktor-client-android:2.2.3")
+}
+
+kapt {
+    correctErrorTypes = true
 }
