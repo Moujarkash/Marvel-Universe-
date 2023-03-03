@@ -5,7 +5,7 @@ import com.mod.marveluniverse.domain.entites.ResourceType
 import com.mod.marveluniverse.domain.utils.flows.CommonFlow
 
 interface ComicRepository {
-    suspend fun requestComics(query: String?, limit: Int, offset: Int)
+    suspend fun requestComics(query: String? = null, limit: Int, offset: Int)
     fun getComics(): CommonFlow<List<Comic>>
     fun getComicById(id: Int): Comic
     suspend fun requestComicsForEntity(relatedEntity: ResourceType, relatedEntityId: Int, limit: Int, offset: Int)
