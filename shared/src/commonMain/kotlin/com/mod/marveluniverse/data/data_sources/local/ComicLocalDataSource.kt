@@ -12,7 +12,7 @@ import kotlinx.datetime.LocalDateTime
 
 interface ComicLocalDataSource {
     fun getComics(): Flow<List<ComicEntity>>
-    fun getComicById(id: Int): ComicEntity
+    fun getComicById(id: Int): ComicEntity?
     fun getComicsByResource(
         resourceType: ResourceType,
         resourceId: Int
@@ -82,10 +82,10 @@ class ComicLocalDataSourceImpl(
     }
 
 
-    override fun getComicById(id: Int): ComicEntity {
+    override fun getComicById(id: Int): ComicEntity? {
         return comicQueries
             .getComicById(id)
-            .executeAsOne()
+            .executeAsOneOrNull()
     }
 
     override fun getComicsByResource(

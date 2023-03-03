@@ -34,6 +34,7 @@ class AppModule {
                 resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
                 resourceIdAdapter = IntColumnAdapter,
                 totalResultsAdapter = IntColumnAdapter,
+                recordsLimitAdapter = IntColumnAdapter,
                 offsetAdapter = IntColumnAdapter,
                 createdAtAdapter = LocalDateTimeAdapter(),
                 updatedAtAdapter = LocalDateTimeAdapter(),

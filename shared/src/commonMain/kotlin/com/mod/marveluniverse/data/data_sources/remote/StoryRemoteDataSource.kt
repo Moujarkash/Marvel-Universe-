@@ -13,16 +13,16 @@ interface StoryRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<StoryDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<StoryDto>
 
     suspend fun fetchStoriesByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<StoryDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<StoryDto>
 }
 
 class StoryRemoteDataSourceImpl(
@@ -33,14 +33,14 @@ class StoryRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<StoryDto>> {
+    ): ResponseWrapperDto<StoryDto> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/stories")
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
@@ -55,7 +55,7 @@ class StoryRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<StoryDto>> {
+    ): ResponseWrapperDto<StoryDto> {
         return processRequest(
             request = {
                 httpClient.get {
@@ -64,9 +64,9 @@ class StoryRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/stories"
                     )
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->

@@ -13,16 +13,16 @@ interface CharacterRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<CharacterDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<CharacterDto>
 
     suspend fun fetchCharactersByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<CharacterDto>>
+        etag: String?= null
+    ): ResponseWrapperDto<CharacterDto>
 }
 
 class CharacterRemoteDataSourceImpl(
@@ -33,14 +33,15 @@ class CharacterRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<CharacterDto>> {
+    ): ResponseWrapperDto<CharacterDto> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/characters")
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("nameStartsWith", query)
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
@@ -55,7 +56,7 @@ class CharacterRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<CharacterDto>> {
+    ): ResponseWrapperDto<CharacterDto> {
         return processRequest(
             request = {
                 httpClient.get {
@@ -64,9 +65,9 @@ class CharacterRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/characters"
                     )
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->

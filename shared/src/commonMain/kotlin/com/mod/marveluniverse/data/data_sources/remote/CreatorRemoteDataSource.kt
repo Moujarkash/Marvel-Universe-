@@ -13,16 +13,16 @@ interface CreatorRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<CreatorDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<CreatorDto>
 
     suspend fun fetchCreatorsByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<CreatorDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<CreatorDto>
 }
 
 class CreatorRemoteDataSourceImpl(
@@ -33,14 +33,15 @@ class CreatorRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<CreatorDto>> {
+    ): ResponseWrapperDto<CreatorDto> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/creators")
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("nameStartsWith", query)
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
@@ -55,7 +56,7 @@ class CreatorRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<CreatorDto>> {
+    ): ResponseWrapperDto<CreatorDto> {
         return processRequest(
             request = {
                 httpClient.get {
@@ -64,9 +65,9 @@ class CreatorRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/creators"
                     )
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->

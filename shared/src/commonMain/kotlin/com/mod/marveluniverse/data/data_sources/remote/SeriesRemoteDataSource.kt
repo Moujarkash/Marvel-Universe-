@@ -13,16 +13,16 @@ interface SeriesRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<SeriesDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<SeriesDto>
 
     suspend fun fetchSeriesByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<SeriesDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<SeriesDto>
 }
 
 class SeriesRemoteDataSourceImpl(
@@ -33,14 +33,15 @@ class SeriesRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<SeriesDto>> {
+    ): ResponseWrapperDto<SeriesDto> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/series")
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("titleStartsWith", query)
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
@@ -55,7 +56,7 @@ class SeriesRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<SeriesDto>> {
+    ): ResponseWrapperDto<SeriesDto> {
         return processRequest(
             request = {
                 httpClient.get {
@@ -64,9 +65,9 @@ class SeriesRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/series"
                     )
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->

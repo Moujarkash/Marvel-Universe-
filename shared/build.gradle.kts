@@ -7,8 +7,6 @@ plugins {
 }
 
 kotlin {
-    val pagingVersion = "0.6.2"
-
     android {
         compilations.all {
             kotlinOptions {
@@ -28,7 +26,6 @@ kotlin {
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
-            export("io.github.kuuuurt:multiplatform-paging:$pagingVersion")
         }
     }
     
@@ -46,7 +43,6 @@ kotlin {
                 implementation("app.cash.sqldelight:runtime:$sqldelightVersion")
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")
                 implementation("app.cash.sqldelight:primitive-adapters:$sqldelightVersion")
-                api("io.github.kuuuurt:multiplatform-paging:$pagingVersion")
             }
         }
         val commonTest by getting {
@@ -58,7 +54,6 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
                 implementation("app.cash.sqldelight:android-driver:$sqldelightVersion")
-                implementation("androidx.paging:paging-runtime:3.1.1")
             }
         }
         val androidUnitTest by getting

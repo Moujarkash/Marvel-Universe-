@@ -12,6 +12,7 @@ CREATE TABLE requestEntity(
     relatedEntity TEXT,
     query TEXT,
     totalResults INTEGER AS Int NOT NULL,
+    recordsLimit INTEGER AS Int,
     offset INTEGER AS Int,
     etag TEXT NOT NULL,
     createdAt TEXT AS LocalDateTime NOT NULL,
@@ -25,7 +26,16 @@ WHERE type = ? AND
 resourceType = ? AND
 resourceId = ? AND
 relatedEntity = ? AND
-query = ?;
+query = ? AND
+recordsLimit = ? AND
+offset = ?;
+
+getRequestsNotMatchingQuery:
+SELECT *
+FROM requestEntity
+WHERE type = ? AND
+resourceType = ? AND
+query != ?;
 
 insertRequest:
 INSERT OR REPLACE
@@ -37,9 +47,14 @@ INTO requestEntity(
     relatedEntity,
     query,
     totalResults,
+    recordsLimit,
     offset,
     etag,
     createdAt,
     updatedAt
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteRequestsByTypeAndResource:
+DELETE FROM requestEntity
+WHERE type = ? AND resourceType = ?;

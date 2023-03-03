@@ -13,16 +13,16 @@ interface ComicRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<ComicDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<ComicDto>
 
     suspend fun fetchComicsByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<ComicDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<ComicDto>
 }
 
 class ComicRemoteDataSourceImpl(
@@ -33,14 +33,15 @@ class ComicRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<ComicDto>> {
+    ): ResponseWrapperDto<ComicDto> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/comics")
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("titleStartsWith", query)
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
@@ -55,7 +56,7 @@ class ComicRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<ComicDto>> {
+    ): ResponseWrapperDto<ComicDto> {
         return processRequest(
             request = {
                 httpClient.get {
@@ -64,9 +65,9 @@ class ComicRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/comics"
                     )
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->

@@ -13,16 +13,16 @@ interface EventRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<EventDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<EventDto>
 
     suspend fun fetchEventsByResource(
         resourceType: ResourceType,
         resourceId: Int,
         limit: Int,
         offset: Int,
-        etag: String?
-    ): ResponseWrapperDto<List<EventDto>>
+        etag: String? = null
+    ): ResponseWrapperDto<EventDto>
 }
 
 class EventRemoteDataSourceImpl(
@@ -33,14 +33,15 @@ class EventRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<EventDto>> {
+    ): ResponseWrapperDto<EventDto> {
         return processRequest(
             request = {
                 httpClient.get {
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/events")
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("nameStartsWith", query)
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
@@ -55,7 +56,7 @@ class EventRemoteDataSourceImpl(
         limit: Int,
         offset: Int,
         etag: String?
-    ): ResponseWrapperDto<List<EventDto>> {
+    ): ResponseWrapperDto<EventDto> {
         return processRequest(
             request = {
                 httpClient.get {
@@ -64,9 +65,9 @@ class EventRemoteDataSourceImpl(
                             resourceType
                         ) + "/${resourceId}" + "/events"
                     )
-                    etag?.let {
-                        header("If-None-Match", it)
-                    }
+                    parameter("limit", limit)
+                    parameter("offset", offset)
+                    header("If-None-Match", etag)
                 }
             },
             onSuccess = { httpResponse ->
