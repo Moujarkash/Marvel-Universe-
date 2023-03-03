@@ -27,9 +27,6 @@ class ComicRepositoryImpl(
         val resourceType = ResourceType.COMIC
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-        val requestsNotMatchingQuery = requestLocalDataSource
-            .getRequestsNotMatchingQuery(requestType, resourceType, query)
-
         val request = requestLocalDataSource
             .getRequest(
                 type = requestType,
@@ -154,6 +151,13 @@ class ComicRepositoryImpl(
                 offset = offset
             )
 
+            val requestsWithDifferentQuery = requestLocalDataSource
+                .getRequestsNotMatchingQuery(requestType, resourceType, query)
+            if (requestsWithDifferentQuery.isNotEmpty()) {
+                requestLocalDataSource.deleteRequestsByTypeAndResource(requestType, resourceType)
+                comicLocalDataSource.clearComics()
+            }
+
             requestLocalDataSource.insertRequest(
                 type = requestType,
                 resourceType = resourceType,
@@ -204,19 +208,196 @@ class ComicRepositoryImpl(
         return comicEntity.toDomainEntity()
     }
 
-    override suspend fun requestComicsResource(
-        resourceType: ResourceType,
-        resourceId: Int,
+    override suspend fun requestComicsForEntity(
+        relatedEntity: ResourceType,
+        relatedEntityId: Int,
         limit: Int,
         offset: Int
     ) {
-        TODO("Not yet implemented")
+        val requestType = RequestType.RELATED_ENTITY
+        val resourceType = ResourceType.COMIC
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+        val request = requestLocalDataSource
+            .getRequest(
+                type = requestType,
+                resourceType = resourceType,
+                relatedEntity = relatedEntity,
+                relatedEntityId = relatedEntityId,
+                offset = offset,
+                limit = limit
+            )
+        if (request != null) {
+            if (request.isExpired()) {
+                try {
+                    var offsetValue = offset
+                    var etagValue: String? = request.etag
+                    if (offset == request.totalResults) {
+                        offsetValue = 0
+                        etagValue = null
+                    }
+
+                    val response = comicRemoteDataSource.fetchComicsByResource(
+                        resourceType = relatedEntity,
+                        resourceId = relatedEntityId,
+                        limit = limit,
+                        offset = offsetValue,
+                        etag = etagValue
+                    )
+
+                    requestLocalDataSource.deleteRequestsByTypeAndResource(requestType, resourceType)
+                    requestLocalDataSource.insertRequest(
+                        type = requestType,
+                        resourceType = resourceType,
+                        relatedEntity = relatedEntity,
+                        relatedEntityId = relatedEntityId,
+                        totalResults = response.data.total,
+                        limit = limit,
+                        offset = offsetValue,
+                        etag = response.etag,
+                        createdAt = now,
+                        updatedAt = now
+                    )
+
+                    comicLocalDataSource.clearComicsResource(relatedEntity, relatedEntityId)
+                    for (comicDto in response.data.results) {
+                        comicLocalDataSource.insertComicResource(
+                            resourceType = relatedEntity,
+                            resourceId = relatedEntityId,
+                            id = comicDto.id,
+                            title = comicDto.title,
+                            description = comicDto.description,
+                            modified = comicDto.modified,
+                            isbn = comicDto.isbn,
+                            pageCount = comicDto.pageCount,
+                            textObjects = comicDto.textObjects,
+                            urls = comicDto.urls,
+                            series = comicDto.series,
+                            variants = comicDto.variants,
+                            dates = comicDto.dates,
+                            prices = comicDto.prices,
+                            thumbnail = comicDto.thumbnail,
+                            images = comicDto.images,
+                            creators = comicDto.creators,
+                            characters = comicDto.characters,
+                            stories = comicDto.stories,
+                            events = comicDto.events
+                        )
+                    }
+
+                } catch (e: AppException.DataNotChangedOnServer) {
+                    requestLocalDataSource.refreshRequest(request)
+                }
+            } else {
+                if (offset == request.totalResults) return
+
+                try {
+                    val response = comicRemoteDataSource.fetchComicsByResource(
+                        resourceType = relatedEntity,
+                        resourceId = relatedEntityId,
+                        limit = limit,
+                        offset = offset,
+                        etag = request.etag
+                    )
+
+                    requestLocalDataSource.deleteRequestsByTypeAndResource(requestType, resourceType)
+                    requestLocalDataSource.insertRequest(
+                        type = requestType,
+                        resourceType = resourceType,
+                        relatedEntity = relatedEntity,
+                        relatedEntityId = relatedEntityId,
+                        totalResults = response.data.total,
+                        limit = limit,
+                        offset = offset,
+                        etag = response.etag,
+                        createdAt = now,
+                        updatedAt = now
+                    )
+
+                    comicLocalDataSource.clearComicsResource(relatedEntity, relatedEntityId)
+                    for (comicDto in response.data.results) {
+                        comicLocalDataSource.insertComicResource(
+                            resourceType = relatedEntity,
+                            resourceId = relatedEntityId,
+                            id = comicDto.id,
+                            title = comicDto.title,
+                            description = comicDto.description,
+                            modified = comicDto.modified,
+                            isbn = comicDto.isbn,
+                            pageCount = comicDto.pageCount,
+                            textObjects = comicDto.textObjects,
+                            urls = comicDto.urls,
+                            series = comicDto.series,
+                            variants = comicDto.variants,
+                            dates = comicDto.dates,
+                            prices = comicDto.prices,
+                            thumbnail = comicDto.thumbnail,
+                            images = comicDto.images,
+                            creators = comicDto.creators,
+                            characters = comicDto.characters,
+                            stories = comicDto.stories,
+                            events = comicDto.events
+                        )
+                    }
+                } catch (e: AppException.DataNotChangedOnServer) {
+                    requestLocalDataSource.refreshRequest(request)
+                }
+            }
+        } else {
+            val response = comicRemoteDataSource.fetchComicsByResource(
+                resourceType = relatedEntity,
+                resourceId = relatedEntityId,
+                limit = limit,
+                offset = offset
+            )
+
+            requestLocalDataSource.insertRequest(
+                type = requestType,
+                resourceType = resourceType,
+                relatedEntity = relatedEntity,
+                relatedEntityId = relatedEntityId,
+                totalResults = response.data.total,
+                limit = limit,
+                offset = offset,
+                etag = response.etag,
+                createdAt = now,
+                updatedAt = now
+            )
+
+            for (comicDto in response.data.results) {
+                comicLocalDataSource.insertComicResource(
+                    resourceType = relatedEntity,
+                    resourceId = relatedEntityId,
+                    id = comicDto.id,
+                    title = comicDto.title,
+                    description = comicDto.description,
+                    modified = comicDto.modified,
+                    isbn = comicDto.isbn,
+                    pageCount = comicDto.pageCount,
+                    textObjects = comicDto.textObjects,
+                    urls = comicDto.urls,
+                    series = comicDto.series,
+                    variants = comicDto.variants,
+                    dates = comicDto.dates,
+                    prices = comicDto.prices,
+                    thumbnail = comicDto.thumbnail,
+                    images = comicDto.images,
+                    creators = comicDto.creators,
+                    characters = comicDto.characters,
+                    stories = comicDto.stories,
+                    events = comicDto.events
+                )
+            }
+        }
     }
 
-    override fun getComicsResource(
-        resourceType: ResourceType,
-        resourceId: Int
-    ): CommonFlow<List<Comic>> = comicLocalDataSource.getComicsByResource(resourceType, resourceId)
+    override fun getComicsEntity(
+        relatedEntity: ResourceType,
+        relatedEntityId: Int
+    ): CommonFlow<List<Comic>> = comicLocalDataSource.getComicsByResource(
+        relatedEntity,
+        relatedEntityId
+    )
         .map { comicResourceEntities ->
             comicResourceEntities.map { it.toDomainEntity() }
         }

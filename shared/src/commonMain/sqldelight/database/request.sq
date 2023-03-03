@@ -1,6 +1,5 @@
-import com.mod.marveluniverse.domain.entites.ResourceType;
 import com.mod.marveluniverse.domain.entites.RequestType;
-
+import com.mod.marveluniverse.domain.entites.ResourceType;
 import kotlin.Int;
 import kotlinx.datetime.LocalDateTime;
 
@@ -9,7 +8,8 @@ CREATE TABLE requestEntity(
     type TEXT AS RequestType NOT NULL,
     resourceType TEXT AS ResourceType NOT NULL,
     resourceId INTEGER AS Int,
-    relatedEntity TEXT,
+    relatedEntity TEXT AS ResourceType,
+    relatedEntityId INTEGER AS Int,
     query TEXT,
     totalResults INTEGER AS Int NOT NULL,
     recordsLimit INTEGER AS Int,
@@ -26,6 +26,7 @@ WHERE type = ? AND
 resourceType = ? AND
 resourceId = ? AND
 relatedEntity = ? AND
+relatedEntityId = ? AND
 query = ? AND
 recordsLimit = ? AND
 offset = ?;
@@ -45,6 +46,7 @@ INTO requestEntity(
     resourceType,
     resourceId,
     relatedEntity,
+    relatedEntityId,
     query,
     totalResults,
     recordsLimit,
@@ -53,7 +55,7 @@ INTO requestEntity(
     createdAt,
     updatedAt
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteRequestsByTypeAndResource:
 DELETE FROM requestEntity

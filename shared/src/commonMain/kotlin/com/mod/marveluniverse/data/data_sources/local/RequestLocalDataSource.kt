@@ -14,7 +14,8 @@ interface RequestLocalDataSource {
         type: RequestType,
         resourceType: ResourceType,
         resourceId: Int? = null,
-        relatedEntity: String? = null,
+        relatedEntity: ResourceType? = null,
+        relatedEntityId: Int? = null,
         query: String? = null,
         limit: Int? = null,
         offset: Int? = null
@@ -31,7 +32,8 @@ interface RequestLocalDataSource {
         type: RequestType,
         resourceType: ResourceType,
         resourceId: Int? = null,
-        relatedEntity: String? = null,
+        relatedEntity: ResourceType? = null,
+        relatedEntityId: Int? = null,
         query: String? = null,
         totalResults: Int,
         limit: Int? = null,
@@ -55,14 +57,15 @@ class RequestLocalDataSourceImpl(
         type: RequestType,
         resourceType: ResourceType,
         resourceId: Int?,
-        relatedEntity: String?,
+        relatedEntity: ResourceType?,
+        relatedEntityId: Int?,
         query: String?,
         limit: Int?,
         offset: Int?
     ): RequestEntity? {
         return queries
             .getRequest(
-                type, resourceType, resourceId, relatedEntity, query, limit, offset
+                type, resourceType, resourceId, relatedEntity, relatedEntityId, query, limit, offset
             )
             .executeAsOneOrNull()
     }
@@ -82,7 +85,8 @@ class RequestLocalDataSourceImpl(
         type: RequestType,
         resourceType: ResourceType,
         resourceId: Int?,
-        relatedEntity: String?,
+        relatedEntity: ResourceType?,
+        relatedEntityId: Int?,
         query: String?,
         totalResults: Int,
         limit: Int?,
@@ -97,6 +101,7 @@ class RequestLocalDataSourceImpl(
             resourceType,
             resourceId,
             relatedEntity,
+            relatedEntityId,
             query,
             totalResults,
             limit,

@@ -30,9 +30,11 @@ class AppModule {
             driver = DatabaseDriverFactory().create(),
             requestEntityAdapter = RequestEntity.Adapter(
                 idAdapter = IntColumnAdapter,
-                typeAdapter = EnumColumnAdapter<RequestType>(),
-                resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+                typeAdapter = EnumColumnAdapter(),
+                resourceTypeAdapter = EnumColumnAdapter(),
                 resourceIdAdapter = IntColumnAdapter,
+                relatedEntityAdapter = EnumColumnAdapter(),
+                relatedEntityIdAdapter = IntColumnAdapter,
                 totalResultsAdapter = IntColumnAdapter,
                 recordsLimitAdapter = IntColumnAdapter,
                 offsetAdapter = IntColumnAdapter,

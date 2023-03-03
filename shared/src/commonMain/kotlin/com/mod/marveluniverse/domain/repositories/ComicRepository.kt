@@ -8,6 +8,6 @@ interface ComicRepository {
     suspend fun requestComics(query: String?, limit: Int, offset: Int)
     fun getComics(): CommonFlow<List<Comic>>
     fun getComicById(id: Int): Comic
-    suspend fun requestComicsResource(resourceType: ResourceType, resourceId: Int, limit: Int, offset: Int)
-    fun getComicsResource(resourceType: ResourceType, resourceId: Int): CommonFlow<List<Comic>>
+    suspend fun requestComicsForEntity(relatedEntity: ResourceType, relatedEntityId: Int, limit: Int, offset: Int)
+    fun getComicsEntity(relatedEntity: ResourceType, relatedEntityId: Int): CommonFlow<List<Comic>>
 }
