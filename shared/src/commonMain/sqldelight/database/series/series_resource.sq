@@ -12,9 +12,10 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE seriesResourceEntity(
+id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
 resourceType TEXT AS ResourceType NOT NULL,
     resourceId INTEGER AS Int NOT NULL,
-    id INTEGER AS Int NOT NULL,
+    remoteId INTEGER AS Int NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     startYear INTEGER AS Int NOT NULL,
@@ -31,7 +32,7 @@ resourceType TEXT AS ResourceType NOT NULL,
     next TEXT AS SeriesSummaryDto,
     previous TEXT AS SeriesSummaryDto,
 
-    PRIMARY KEY (resourceType, resourceId, id)
+    UNIQUE(resourceType, resourceId, remoteId)
 );
 
 getSeriesResourceByType:
@@ -42,9 +43,10 @@ WHERE resourceType == ? AND resourceId == ?;
 insertSeriesResource:
 INSERT OR REPLACE
 INTO seriesResourceEntity(
+id,
     resourceType,
     resourceId,
-      id,
+      remoteId,
          title,
          description,
          startYear,
@@ -61,7 +63,7 @@ INTO seriesResourceEntity(
          next,
          previous
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearSeriesResource:
 DELETE

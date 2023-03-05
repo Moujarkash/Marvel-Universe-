@@ -20,6 +20,11 @@ class ComicListViewModel(
         comicRepository.getComics()
     ) { state, comics ->
         if (state.comics != comics) {
+            _state.update {
+                it.copy(
+                    comics = comics,
+                )
+            }
             state.copy(comics = comics)
         } else state
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ComicListState())
@@ -32,7 +37,8 @@ class ComicListViewModel(
             is ComicListEvent.RequestComics -> {
                 _state.update {
                     it.copy(
-                        isFetchingComics = true,
+                        isFetchingComics = !event.isRefresh,
+                        isRefreshing = event.isRefresh,
                         error = null
                     )
                 }
@@ -42,12 +48,13 @@ class ComicListViewModel(
                         comicRepository.requestComics(
                             query = event.query,
                             limit = _limit,
-                            offset = _state.value.comics.size
+                            offset = if (event.isRefresh) 0 else _state.value.comics.size
                         )
 
                         _state.update {
                             it.copy(
                                 isFetchingComics = false,
+                                isRefreshing = false,
                                 error = null
                             )
                         }
@@ -60,6 +67,7 @@ class ComicListViewModel(
                         _state.update {
                             it.copy(
                                 isFetchingComics = false,
+                                isRefreshing = false,
                                 error = errorMessage
                             )
                         }

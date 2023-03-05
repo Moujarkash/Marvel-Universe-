@@ -5,7 +5,7 @@ import database.series.SeriesEntity
 import database.series.SeriesResourceEntity
 
 fun SeriesEntity.toDomainEntity() = Series(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     urls = urls.map { it.toDomainEntity() },
@@ -24,7 +24,7 @@ fun SeriesEntity.toDomainEntity() = Series(
 )
 
 fun SeriesResourceEntity.toDomainEntity() = Series(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     urls = urls.map { it.toDomainEntity() },

@@ -4,11 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.mod.marveluniverse.Greeting
+import androidx.compose.material.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.mod.marveluniverse.android.comic.list.AndroidComicListViewModel
+import com.mod.marveluniverse.android.comic.list.ComicListScreen
+import com.mod.marveluniverse.android.core.Routes
+import com.mod.marveluniverse.presentation.comic.list.ComicListEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    GreetingView(Greeting().greet())
+                    RootApp()
                 }
             }
         }
@@ -29,14 +37,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun GreetingView(text: String) {
-    Text(text = text)
-}
+fun RootApp() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Routes.COMIC_LIST
+    ) {
+        composable(route = Routes.COMIC_LIST) {
+            val viewModel = hiltViewModel<AndroidComicListViewModel>()
+            val state by viewModel.state.collectAsState()
 
-@Preview
-@Composable
-fun DefaultPreview() {
-    ApplicationTheme {
-        GreetingView("Hello, Android!")
+            ComicListScreen(state = state, onEvent = viewModel::onEvent)
+        }
     }
 }

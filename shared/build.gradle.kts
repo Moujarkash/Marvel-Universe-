@@ -39,6 +39,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("ch.qos.logback:logback-classic:1.1.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("app.cash.sqldelight:runtime:$sqldelightVersion")
                 implementation("app.cash.sqldelight:coroutines-extensions:$sqldelightVersion")

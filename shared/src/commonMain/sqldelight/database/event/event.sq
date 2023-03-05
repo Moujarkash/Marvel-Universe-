@@ -11,7 +11,8 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE eventEntity(
-        id INTEGER AS Int NOT NULL PRIMARY KEY,
+        id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+        remoteId INTEGER AS Int NOT NULL,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         urls TEXT AS List<UrlDto> NOT NULL,
@@ -28,10 +29,10 @@ CREATE TABLE eventEntity(
         previous TEXT AS EventSummaryDto
 );
 
-getEventById:
+getEventByRemoteId:
 SELECT  *
 FROM eventEntity
-WHERE id == ?;
+WHERE remoteId == ?;
 
 getEvents:
 SELECT *
@@ -41,6 +42,7 @@ insertEvent:
 INSERT OR REPLACE
 INTO eventEntity(
     id,
+    remoteId,
     title,
     description,
     urls,
@@ -56,7 +58,7 @@ INTO eventEntity(
     next,
     previous
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearEvents:
 DELETE FROM eventEntity;

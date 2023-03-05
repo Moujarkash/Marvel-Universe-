@@ -5,7 +5,7 @@ import database.story.StoryEntity
 import database.story.StoryResourceEntity
 
 fun StoryEntity.toDomainEntity() = Story(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     type = type,
@@ -20,7 +20,7 @@ fun StoryEntity.toDomainEntity() = Story(
 )
 
 fun StoryResourceEntity.toDomainEntity() = Story(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     type = type,

@@ -11,7 +11,8 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE seriesEntity(
-    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+    remoteId INTEGER AS Int NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     startYear INTEGER AS Int NOT NULL,
@@ -29,10 +30,10 @@ CREATE TABLE seriesEntity(
     previous TEXT AS SeriesSummaryDto
 );
 
-getSeriesById:
+getSeriesByRemoteId:
 SELECT  *
 FROM seriesEntity
-WHERE id == ?;
+WHERE remoteId == ?;
 
 getSeries:
 SELECT *
@@ -42,6 +43,7 @@ insertSeries:
 INSERT OR REPLACE
 INTO seriesEntity(
     id,
+    remoteId,
     title,
     description,
     startYear,
@@ -58,7 +60,7 @@ INTO seriesEntity(
     next,
     previous
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearSeries:
 DELETE FROM seriesEntity;

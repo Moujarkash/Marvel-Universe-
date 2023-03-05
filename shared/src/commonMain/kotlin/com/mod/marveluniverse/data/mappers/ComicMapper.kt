@@ -5,7 +5,7 @@ import database.comic.ComicEntity
 import database.comic.ComicResourceEntity
 
 fun ComicEntity.toDomainEntity() = Comic(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     modified = modified,
@@ -26,7 +26,7 @@ fun ComicEntity.toDomainEntity() = Comic(
 )
 
 fun ComicResourceEntity.toDomainEntity() = Comic(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     modified = modified,

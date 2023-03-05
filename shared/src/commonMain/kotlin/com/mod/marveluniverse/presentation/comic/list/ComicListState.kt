@@ -5,5 +5,6 @@ import com.mod.marveluniverse.domain.entites.Comic
 data class ComicListState(
     val comics: List<Comic> = emptyList(),
     val isFetchingComics: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isRefreshing: Boolean = false
 )

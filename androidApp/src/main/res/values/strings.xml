@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="marvel_universe">Marvel Universe</string>
+    <string name="error_message">Something went wrong!</string>
+    <string name="copyright_message">Data provided by Marvel. © 2023 MARVEL</string>
+    <string name="comics">Comics</string>
+</resources>

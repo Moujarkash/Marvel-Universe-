@@ -8,7 +8,6 @@ import database.event.EventEntity
 import database.event.EventResourceEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
 
 interface EventLocalDataSource {
     fun getEvents(): Flow<List<EventEntity>>
@@ -18,42 +17,14 @@ interface EventLocalDataSource {
         resourceId: Int
     ): Flow<List<EventResourceEntity>>
 
-    fun insertEvent(
-        id: Int,
-        title: String,
-        description: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        start: LocalDateTime,
-        end: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: EventSummaryDto?,
-        previous: EventSummaryDto?
+    fun insertEvents(
+        events: List<EventDto>
     )
 
-    fun insertEventResource(
+    fun insertEventsResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        start: LocalDateTime,
-        end: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: EventSummaryDto?,
-        previous: EventSummaryDto?
+        events: List<EventDto>
     )
 
     fun clearEvents()
@@ -77,7 +48,7 @@ class EventLocalDataSourceImpl(
 
     override fun getEventById(id: Int): EventEntity {
         return eventQueries
-            .getEventById(id)
+            .getEventByRemoteId(id)
             .executeAsOne()
     }
 
@@ -93,82 +64,64 @@ class EventLocalDataSourceImpl(
             }
     }
 
-    override fun insertEvent(
-        id: Int,
-        title: String,
-        description: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        start: LocalDateTime,
-        end: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: EventSummaryDto?,
-        previous: EventSummaryDto?
+    override fun insertEvents(
+        events: List<EventDto>
     ) {
-        eventQueries
-            .insertEvent(
-                id = id,
-                title = title,
-                description = description,
-                urls = urls,
-                modified = modified,
-                start = start,
-                end = end,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                stories = stories,
-                characters = characters,
-                creators = creators,
-                next = next,
-                previous = previous
-            )
+        eventQueries.transaction {
+            events.forEach {
+                eventQueries
+                    .insertEvent(
+                        id = null,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        urls = it.urls,
+                        modified = it.modified,
+                        start = it.start,
+                        end = it.end,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        stories = it.stories,
+                        characters = it.characters,
+                        creators = it.creators,
+                        next = it.next,
+                        previous = it.previous
+                    )
+            }
+        }
     }
 
-    override fun insertEventResource(
+    override fun insertEventsResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        start: LocalDateTime,
-        end: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: EventSummaryDto?,
-        previous: EventSummaryDto?
+        events: List<EventDto>
     ) {
-        eventResourceQueries
-            .insertEventResource(
-                resourceType = resourceType,
-                resourceId = resourceId,
-                id = id,
-                title = title,
-                description = description,
-                urls = urls,
-                modified = modified,
-                start = start,
-                end = end,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                stories = stories,
-                characters = characters,
-                creators = creators,
-                next = next,
-                previous = previous
-            )
+        eventResourceQueries.transaction {
+            events.forEach {
+                eventResourceQueries
+                    .insertEventResource(
+                        id = null,
+                        resourceType = resourceType,
+                        resourceId = resourceId,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        urls = it.urls,
+                        modified = it.modified,
+                        start = it.start,
+                        end = it.end,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        stories = it.stories,
+                        characters = it.characters,
+                        creators = it.creators,
+                        next = it.next,
+                        previous = it.previous
+                    )
+            }
+        }
     }
 
     override fun clearEvents() {

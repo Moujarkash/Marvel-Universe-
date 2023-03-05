@@ -11,13 +11,13 @@ class UrlsAdapter : ColumnAdapter<List<UrlDto>, String> {
         if (databaseValue.isEmpty())
             return listOf()
 
-        return databaseValue.split(",").map { json ->
+        return databaseValue.split(",,,").map { json ->
             Json.decodeFromString(json)
         }
     }
 
     override fun encode(value: List<UrlDto>): String {
-        return value.joinToString(separator = ",") {
+        return value.joinToString(separator = ",,,") {
             Json.encodeToString(it)
         }
     }

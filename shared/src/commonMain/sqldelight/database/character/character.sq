@@ -9,7 +9,8 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE characterEntity(
-    id INTEGER AS Int NOT NULL PRIMARY KEY,
+     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+     remoteId INTEGER AS Int NOT NULL,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     modified TEXT AS LocalDateTime NOT NULL,
@@ -21,10 +22,10 @@ CREATE TABLE characterEntity(
     events TEXT AS EventsResourceListDto NOT NULL
 );
 
-getCharacterById:
+getCharacterByRemoteId:
 SELECT  *
 FROM characterEntity
-WHERE id == ?;
+WHERE remoteId == ?;
 
 getCharacters:
 SELECT *
@@ -34,6 +35,7 @@ insertCharacter:
 INSERT OR REPLACE
 INTO characterEntity(
     id,
+    remoteId,
     name,
     description,
     modified,
@@ -44,7 +46,7 @@ INTO characterEntity(
     stories,
     events
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearCharacters:
 DELETE FROM characterEntity;

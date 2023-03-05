@@ -10,13 +10,13 @@ class ComicSummariesAdapter: ColumnAdapter<List<ComicSummaryDto>, String> {
     override fun decode(databaseValue: String): List<ComicSummaryDto> {
         if (databaseValue.isEmpty()) return listOf()
 
-        return databaseValue.split(",").map { json ->
+        return databaseValue.split(",,,").map { json ->
             Json.decodeFromString(json)
         }
     }
 
     override fun encode(value: List<ComicSummaryDto>): String {
-        return value.joinToString(separator = ",") {
+        return value.joinToString(separator = ",,,") {
             Json.encodeToString(it)
         }
     }

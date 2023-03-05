@@ -8,7 +8,6 @@ import database.series.SeriesEntity
 import database.series.SeriesResourceEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
 
 interface SeriesLocalDataSource {
     fun getSeries(): Flow<List<SeriesEntity>>
@@ -19,43 +18,13 @@ interface SeriesLocalDataSource {
     ): Flow<List<SeriesResourceEntity>>
 
     fun insertSeries(
-        id: Int,
-        title: String,
-        description: String,
-        startYear: Int,
-        endYear: Int,
-        rating: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: SeriesSummaryDto?,
-        previous: SeriesSummaryDto?
+        series: List<SeriesDto>
     )
 
     fun insertSeriesResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        startYear: Int,
-        endYear: Int,
-        rating: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: SeriesSummaryDto?,
-        previous: SeriesSummaryDto?
+        series: List<SeriesDto>
     )
 
     fun clearSeries()
@@ -79,7 +48,7 @@ class SeriesLocalDataSourceImpl(
 
     override fun getSeriesById(id: Int): SeriesEntity {
         return seriesQueries
-            .getSeriesById(id)
+            .getSeriesByRemoteId(id)
             .executeAsOne()
     }
 
@@ -96,85 +65,65 @@ class SeriesLocalDataSourceImpl(
     }
 
     override fun insertSeries(
-        id: Int,
-        title: String,
-        description: String,
-        startYear: Int,
-        endYear: Int,
-        rating: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: SeriesSummaryDto?,
-        previous: SeriesSummaryDto?
+        series: List<SeriesDto>
     ) {
-        seriesQueries
-            .insertSeries(
-                id = id,
-                title = title,
-                description = description,
-                startYear = startYear,
-                endYear = endYear,
-                rating = rating,
-                urls = urls,
-                modified = modified,
-                thumbnail = thumbnail,
-                comics = comics,
-                stories = stories,
-                events = events,
-                characters = characters,
-                creators = creators,
-                next = next,
-                previous = previous
-            )
+        seriesQueries.transaction {
+            series.forEach {
+                seriesQueries
+                    .insertSeries(
+                        id = null,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        startYear = it.startYear,
+                        endYear = it.endYear,
+                        rating = it.rating,
+                        urls = it.urls,
+                        modified = it.modified,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        stories = it.stories,
+                        events = it.events,
+                        characters = it.characters,
+                        creators = it.creators,
+                        next = it.next,
+                        previous = it.previous
+                    )
+            }
+        }
     }
 
     override fun insertSeriesResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        startYear: Int,
-        endYear: Int,
-        rating: String,
-        urls: List<UrlDto>,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        next: SeriesSummaryDto?,
-        previous: SeriesSummaryDto?
+        series: List<SeriesDto>
     ) {
-        seriesResourceQueries
-            .insertSeriesResource(
-                resourceType = resourceType,
-                resourceId = resourceId,
-                id = id,
-                title = title,
-                description = description,
-                startYear = startYear,
-                endYear = endYear,
-                rating = rating,
-                urls = urls,
-                modified = modified,
-                thumbnail = thumbnail,
-                comics = comics,
-                stories = stories,
-                events = events,
-                characters = characters,
-                creators = creators,
-                next = next,
-                previous = previous
-            )
+        seriesResourceQueries.transaction {
+            series.forEach {
+                seriesResourceQueries
+                    .insertSeriesResource(
+                        id = null,
+                        resourceType = resourceType,
+                        resourceId = resourceId,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        startYear = it.startYear,
+                        endYear = it.endYear,
+                        rating = it.rating,
+                        urls = it.urls,
+                        modified = it.modified,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        stories = it.stories,
+                        events = it.events,
+                        characters = it.characters,
+                        creators = it.creators,
+                        next = it.next,
+                        previous = it.previous
+                    )
+            }
+        }
     }
 
     override fun clearSeries() {

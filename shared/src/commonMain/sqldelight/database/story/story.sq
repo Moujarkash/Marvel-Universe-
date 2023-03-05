@@ -9,7 +9,8 @@ import kotlin.Int;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE storyEntity(
-     id INTEGER AS Int NOT NULL PRIMARY KEY,
+     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+     remoteId INTEGER AS Int NOT NULL,
      title TEXT NOT NULL,
      description TEXT NOT NULL,
      type TEXT NOT NULL,
@@ -23,10 +24,10 @@ CREATE TABLE storyEntity(
      originalIssue TEXT AS ComicSummaryDto
 );
 
-getStoryById:
+getStoryByRemoteId:
 SELECT  *
 FROM storyEntity
-WHERE id == ?;
+WHERE remoteId == ?;
 
 getStories:
 SELECT *
@@ -36,6 +37,7 @@ insertStory:
 INSERT OR REPLACE
 INTO storyEntity(
     id,
+    remoteId,
     title,
     description,
     type,
@@ -48,7 +50,7 @@ INTO storyEntity(
     creators,
     originalIssue
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearStories:
 DELETE FROM storyEntity;

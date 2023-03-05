@@ -12,9 +12,10 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE eventResourceEntity(
+id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
 resourceType TEXT AS ResourceType NOT NULL,
     resourceId INTEGER AS Int NOT NULL,
-        id INTEGER AS Int NOT NULL,
+        remoteId INTEGER AS Int NOT NULL,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         urls TEXT AS List<UrlDto> NOT NULL,
@@ -30,7 +31,7 @@ resourceType TEXT AS ResourceType NOT NULL,
         next TEXT AS EventSummaryDto,
         previous TEXT AS EventSummaryDto,
 
-        PRIMARY KEY (resourceType, resourceId, id)
+            UNIQUE(resourceType, resourceId, remoteId)
 );
 
 getEventsResourceByType:
@@ -41,9 +42,10 @@ WHERE resourceType == ? AND resourceId == ?;
 insertEventResource:
 INSERT OR REPLACE
 INTO eventResourceEntity(
+    id,
     resourceType,
     resourceId,
-    id,
+    remoteId,
         title,
         description,
         urls,
@@ -59,7 +61,7 @@ INTO eventResourceEntity(
         next,
         previous
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearEventsResource:
 DELETE

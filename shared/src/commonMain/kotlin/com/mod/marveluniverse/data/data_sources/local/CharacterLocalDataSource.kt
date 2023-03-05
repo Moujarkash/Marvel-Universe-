@@ -8,7 +8,6 @@ import database.character.CharacterEntity
 import database.character.CharacterResourceEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
 
 interface CharacterLocalDataSource {
     fun getCharacters(): Flow<List<CharacterEntity>>
@@ -18,32 +17,14 @@ interface CharacterLocalDataSource {
         resourceId: Int
     ): Flow<List<CharacterResourceEntity>>
 
-    fun insertCharacter(
-        id: Int,
-        name: String,
-        description: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+    fun insertCharacters(
+        characters: List<CharacterDto>
     )
 
-    fun insertCharacterResource(
+    fun insertCharactersResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        name: String,
-        description: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+        characters: List<CharacterDto>
     )
 
     fun clearCharacters()
@@ -67,7 +48,7 @@ class CharacterLocalDataSourceImpl(
 
     override fun getCharacterById(id: Int): CharacterEntity {
         return characterQueries
-            .getCharacterById(id)
+            .getCharacterByRemoteId(id)
             .executeAsOne()
     }
 
@@ -83,62 +64,56 @@ class CharacterLocalDataSourceImpl(
             }
     }
 
-    override fun insertCharacter(
-        id: Int,
-        name: String,
-        description: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+    override fun insertCharacters(
+        characters: List<CharacterDto>
     ) {
-        characterQueries
-            .insertCharacter(
-                id = id,
-                name = name,
-                description = description,
-                modified = modified,
-                urls = urls,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                stories = stories,
-                events = events
-            )
+        characterQueries.transaction {
+            characters.forEach {
+                characterQueries
+                    .insertCharacter(
+                        id = null,
+                        remoteId = it.id,
+                        name = it.name,
+                        description = it.description,
+                        modified = it.modified,
+                        urls = it.urls,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        stories = it.stories,
+                        events = it.events
+                    )
+            }
+        }
+
+
     }
 
-    override fun insertCharacterResource(
+    override fun insertCharactersResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        name: String,
-        description: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+        characters: List<CharacterDto>
     ) {
-        characterResourceQueries
-            .insertCharacterResource(
-                resourceType = resourceType,
-                resourceId = resourceId,
-                id = id,
-                name = name,
-                description = description,
-                modified = modified,
-                urls = urls,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                stories = stories,
-                events = events
-            )
+        characterResourceQueries.transaction {
+            characters.forEach {
+                characterResourceQueries
+                    .insertCharacterResource(
+                        id = null,
+                        resourceType = resourceType,
+                        resourceId = resourceId,
+                        remoteId = it.id,
+                        name = it.name,
+                        description = it.description,
+                        modified = it.modified,
+                        urls = it.urls,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        stories = it.stories,
+                        events = it.events
+                    )
+            }
+        }
     }
 
     override fun clearCharacters() {

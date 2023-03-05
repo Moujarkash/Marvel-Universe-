@@ -67,28 +67,7 @@ class ComicRepositoryImpl(
                     )
 
                     comicLocalDataSource.clearComics()
-                    for (comicDto in response.data.results) {
-                        comicLocalDataSource.insertComic(
-                            id = comicDto.id,
-                            title = comicDto.title,
-                            description = comicDto.description,
-                            modified = comicDto.modified,
-                            isbn = comicDto.isbn,
-                            pageCount = comicDto.pageCount,
-                            textObjects = comicDto.textObjects,
-                            urls = comicDto.urls,
-                            series = comicDto.series,
-                            variants = comicDto.variants,
-                            dates = comicDto.dates,
-                            prices = comicDto.prices,
-                            thumbnail = comicDto.thumbnail,
-                            images = comicDto.images,
-                            creators = comicDto.creators,
-                            characters = comicDto.characters,
-                            stories = comicDto.stories,
-                            events = comicDto.events
-                        )
-                    }
+                    comicLocalDataSource.insertComics(response.data.results)
 
                 } catch (e: AppException.DataNotChangedOnServer) {
                     requestLocalDataSource.refreshRequest(request)
@@ -118,28 +97,7 @@ class ComicRepositoryImpl(
                     )
 
                     comicLocalDataSource.clearComics()
-                    for (comicDto in response.data.results) {
-                        comicLocalDataSource.insertComic(
-                            id = comicDto.id,
-                            title = comicDto.title,
-                            description = comicDto.description,
-                            modified = comicDto.modified,
-                            isbn = comicDto.isbn,
-                            pageCount = comicDto.pageCount,
-                            textObjects = comicDto.textObjects,
-                            urls = comicDto.urls,
-                            series = comicDto.series,
-                            variants = comicDto.variants,
-                            dates = comicDto.dates,
-                            prices = comicDto.prices,
-                            thumbnail = comicDto.thumbnail,
-                            images = comicDto.images,
-                            creators = comicDto.creators,
-                            characters = comicDto.characters,
-                            stories = comicDto.stories,
-                            events = comicDto.events
-                        )
-                    }
+                    comicLocalDataSource.insertComics(response.data.results)
                 } catch (e: AppException.DataNotChangedOnServer) {
                     requestLocalDataSource.refreshRequest(request)
                 }
@@ -170,28 +128,7 @@ class ComicRepositoryImpl(
                 updatedAt = now
             )
 
-            for (comicDto in response.data.results) {
-                comicLocalDataSource.insertComic(
-                    id = comicDto.id,
-                    title = comicDto.title,
-                    description = comicDto.description,
-                    modified = comicDto.modified,
-                    isbn = comicDto.isbn,
-                    pageCount = comicDto.pageCount,
-                    textObjects = comicDto.textObjects,
-                    urls = comicDto.urls,
-                    series = comicDto.series,
-                    variants = comicDto.variants,
-                    dates = comicDto.dates,
-                    prices = comicDto.prices,
-                    thumbnail = comicDto.thumbnail,
-                    images = comicDto.images,
-                    creators = comicDto.creators,
-                    characters = comicDto.characters,
-                    stories = comicDto.stories,
-                    events = comicDto.events
-                )
-            }
+            comicLocalDataSource.insertComics(response.data.results)
         }
     }
 
@@ -260,30 +197,11 @@ class ComicRepositoryImpl(
                     )
 
                     comicLocalDataSource.clearComicsResource(relatedEntity, relatedEntityId)
-                    for (comicDto in response.data.results) {
-                        comicLocalDataSource.insertComicResource(
-                            resourceType = relatedEntity,
-                            resourceId = relatedEntityId,
-                            id = comicDto.id,
-                            title = comicDto.title,
-                            description = comicDto.description,
-                            modified = comicDto.modified,
-                            isbn = comicDto.isbn,
-                            pageCount = comicDto.pageCount,
-                            textObjects = comicDto.textObjects,
-                            urls = comicDto.urls,
-                            series = comicDto.series,
-                            variants = comicDto.variants,
-                            dates = comicDto.dates,
-                            prices = comicDto.prices,
-                            thumbnail = comicDto.thumbnail,
-                            images = comicDto.images,
-                            creators = comicDto.creators,
-                            characters = comicDto.characters,
-                            stories = comicDto.stories,
-                            events = comicDto.events
-                        )
-                    }
+                    comicLocalDataSource.insertComicsResource(
+                        resourceType = relatedEntity,
+                        resourceId = relatedEntityId,
+                        comics = response.data.results
+                    )
 
                 } catch (e: AppException.DataNotChangedOnServer) {
                     requestLocalDataSource.refreshRequest(request)
@@ -315,30 +233,11 @@ class ComicRepositoryImpl(
                     )
 
                     comicLocalDataSource.clearComicsResource(relatedEntity, relatedEntityId)
-                    for (comicDto in response.data.results) {
-                        comicLocalDataSource.insertComicResource(
-                            resourceType = relatedEntity,
-                            resourceId = relatedEntityId,
-                            id = comicDto.id,
-                            title = comicDto.title,
-                            description = comicDto.description,
-                            modified = comicDto.modified,
-                            isbn = comicDto.isbn,
-                            pageCount = comicDto.pageCount,
-                            textObjects = comicDto.textObjects,
-                            urls = comicDto.urls,
-                            series = comicDto.series,
-                            variants = comicDto.variants,
-                            dates = comicDto.dates,
-                            prices = comicDto.prices,
-                            thumbnail = comicDto.thumbnail,
-                            images = comicDto.images,
-                            creators = comicDto.creators,
-                            characters = comicDto.characters,
-                            stories = comicDto.stories,
-                            events = comicDto.events
-                        )
-                    }
+                    comicLocalDataSource.insertComicsResource(
+                        resourceType = relatedEntity,
+                        resourceId = relatedEntityId,
+                        comics = response.data.results
+                    )
                 } catch (e: AppException.DataNotChangedOnServer) {
                     requestLocalDataSource.refreshRequest(request)
                 }
@@ -364,30 +263,11 @@ class ComicRepositoryImpl(
                 updatedAt = now
             )
 
-            for (comicDto in response.data.results) {
-                comicLocalDataSource.insertComicResource(
-                    resourceType = relatedEntity,
-                    resourceId = relatedEntityId,
-                    id = comicDto.id,
-                    title = comicDto.title,
-                    description = comicDto.description,
-                    modified = comicDto.modified,
-                    isbn = comicDto.isbn,
-                    pageCount = comicDto.pageCount,
-                    textObjects = comicDto.textObjects,
-                    urls = comicDto.urls,
-                    series = comicDto.series,
-                    variants = comicDto.variants,
-                    dates = comicDto.dates,
-                    prices = comicDto.prices,
-                    thumbnail = comicDto.thumbnail,
-                    images = comicDto.images,
-                    creators = comicDto.creators,
-                    characters = comicDto.characters,
-                    stories = comicDto.stories,
-                    events = comicDto.events
-                )
-            }
+            comicLocalDataSource.insertComicsResource(
+                resourceType = relatedEntity,
+                resourceId = relatedEntityId,
+                comics = response.data.results
+            )
         }
     }
 

@@ -6,15 +6,27 @@ import io.ktor.client.*
 import io.ktor.client.engine.darwin.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
 
 actual class HttpClientFactory {
     actual fun create(): HttpClient {
         val client = HttpClient(Darwin) {
             install(ContentNegotiation) {
-                json()
+                json(
+                    json = Json {
+                        ignoreUnknownKeys = true
+                        isLenient = true
+                        coerceInputValues = true
+                    }
+                )
+            }
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
             }
         }
 

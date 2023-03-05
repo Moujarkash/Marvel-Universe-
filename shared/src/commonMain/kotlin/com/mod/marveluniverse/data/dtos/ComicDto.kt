@@ -1,13 +1,17 @@
+@file:UseSerializers(LocalDateTimeAsStringSerializer::class)
+
 package com.mod.marveluniverse.data.dtos
 
+import com.mod.marveluniverse.data.serializers.LocalDateTimeAsStringSerializer
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
 @Serializable
 data class ComicDto(
     val id: Int,
     val title: String,
-    val description: String,
+    val description: String = "",
     val modified: LocalDateTime,
     val isbn: String,
     val pageCount: Int,

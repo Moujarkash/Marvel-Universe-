@@ -10,13 +10,13 @@ class ImagesAdapter: ColumnAdapter<List<ImageDto>, String> {
     override fun decode(databaseValue: String): List<ImageDto> {
         if (databaseValue.isEmpty()) return listOf()
 
-        return databaseValue.split(",").map { json ->
+        return databaseValue.split(",,,").map { json ->
             Json.decodeFromString(json)
         }
     }
 
     override fun encode(value: List<ImageDto>): String {
-        return value.joinToString(separator = ",") {
+        return value.joinToString(separator = ",,,") {
             Json.encodeToString(it)
         }
     }

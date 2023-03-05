@@ -10,9 +10,10 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE characterResourceEntity(
+        id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
         resourceType TEXT AS ResourceType NOT NULL,
         resourceId INTEGER AS Int NOT NULL,
-        id INTEGER AS Int NOT NULL,
+        remoteId INTEGER AS Int NOT NULL,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
         modified TEXT AS LocalDateTime NOT NULL,
@@ -23,7 +24,7 @@ CREATE TABLE characterResourceEntity(
         stories TEXT AS StoriesResourceListDto NOT NULL,
         events TEXT AS EventsResourceListDto NOT NULL,
 
-        PRIMARY KEY (resourceType, resourceId, id)
+                                UNIQUE(resourceType, resourceId, remoteId)
 );
 
 getCharactersResourceByType:
@@ -34,9 +35,10 @@ WHERE resourceType == ? AND resourceId == ?;
 insertCharacterResource:
 INSERT OR REPLACE
 INTO characterResourceEntity(
+    id,
     resourceType,
     resourceId,
-    id,
+    remoteId,
     name,
     description,
     modified,
@@ -47,7 +49,7 @@ INTO characterResourceEntity(
     stories,
     events
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearCharactersResource:
 DELETE

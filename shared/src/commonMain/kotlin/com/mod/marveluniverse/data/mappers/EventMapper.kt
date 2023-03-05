@@ -5,7 +5,7 @@ import database.event.EventEntity
 import database.event.EventResourceEntity
 
 fun EventEntity.toDomainEntity() = Event(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     urls = urls.map { it.toDomainEntity() },
@@ -23,7 +23,7 @@ fun EventEntity.toDomainEntity() = Event(
 )
 
 fun EventResourceEntity.toDomainEntity() = Event(
-    id = id,
+    id = remoteId,
     title = title,
     description = description,
     urls = urls.map { it.toDomainEntity() },

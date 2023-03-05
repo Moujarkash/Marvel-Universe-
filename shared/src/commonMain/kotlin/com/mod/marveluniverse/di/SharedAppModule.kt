@@ -19,9 +19,10 @@ import database.series.SeriesEntity
 import database.series.SeriesResourceEntity
 import database.story.StoryEntity
 import database.story.StoryResourceEntity
+import io.ktor.client.*
 
 object SharedAppModule {
-    fun provideAppDatabase(driver: SqlDriver): MarvelUniverseDatabase = MarvelUniverseDatabase(
+    fun provideAppDatabase(driver: SqlDriver) = MarvelUniverseDatabase(
         driver = driver,
         requestEntityAdapter = RequestEntity.Adapter(
             idAdapter = IntColumnAdapter,
@@ -38,6 +39,7 @@ object SharedAppModule {
         ),
         comicEntityAdapter = ComicEntity.Adapter(
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             pageCountAdapter = IntColumnAdapter,
             textObjectsAdapter = TextObjectsAdapter(),
@@ -54,9 +56,10 @@ object SharedAppModule {
             eventsAdapter = EventsResourceListAdapter()
         ),
         comicResourceEntityAdapter = ComicResourceEntity.Adapter(
-            resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+            resourceTypeAdapter = EnumColumnAdapter(),
             resourceIdAdapter = IntColumnAdapter,
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             pageCountAdapter = IntColumnAdapter,
             textObjectsAdapter = TextObjectsAdapter(),
@@ -74,6 +77,7 @@ object SharedAppModule {
         ),
         characterEntityAdapter = CharacterEntity.Adapter(
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             urlsAdapter = UrlsAdapter(),
             thumbnailAdapter = ImageAdapter(),
@@ -83,9 +87,10 @@ object SharedAppModule {
             eventsAdapter = EventsResourceListAdapter()
         ),
         characterResourceEntityAdapter = CharacterResourceEntity.Adapter(
-            resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+            resourceTypeAdapter = EnumColumnAdapter(),
             resourceIdAdapter = IntColumnAdapter,
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             urlsAdapter = UrlsAdapter(),
             thumbnailAdapter = ImageAdapter(),
@@ -96,6 +101,7 @@ object SharedAppModule {
         ),
         creatorEntityAdapter = CreatorEntity.Adapter(
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             urlsAdapter = UrlsAdapter(),
             thumbnailAdapter = ImageAdapter(),
@@ -105,9 +111,10 @@ object SharedAppModule {
             eventsAdapter = EventsResourceListAdapter()
         ),
         creatorResourceEntityAdapter = CreatorResourceEntity.Adapter(
-            resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+            resourceTypeAdapter = EnumColumnAdapter(),
             resourceIdAdapter = IntColumnAdapter,
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             urlsAdapter = UrlsAdapter(),
             thumbnailAdapter = ImageAdapter(),
@@ -118,6 +125,7 @@ object SharedAppModule {
         ),
         eventEntityAdapter = EventEntity.Adapter(
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             urlsAdapter = UrlsAdapter(),
             modifiedAdapter = LocalDateTimeAdapter(),
             startAdapter = LocalDateTimeAdapter(),
@@ -132,9 +140,10 @@ object SharedAppModule {
             previousAdapter = EventSummaryAdapter()
         ),
         eventResourceEntityAdapter = EventResourceEntity.Adapter(
-            resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+            resourceTypeAdapter = EnumColumnAdapter(),
             resourceIdAdapter = IntColumnAdapter,
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             urlsAdapter = UrlsAdapter(),
             modifiedAdapter = LocalDateTimeAdapter(),
             startAdapter = LocalDateTimeAdapter(),
@@ -150,6 +159,7 @@ object SharedAppModule {
         ),
         seriesEntityAdapter = SeriesEntity.Adapter(
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             startYearAdapter = IntColumnAdapter,
             endYearAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
@@ -164,9 +174,10 @@ object SharedAppModule {
             previousAdapter = SeriesSummaryAdapter()
         ),
         seriesResourceEntityAdapter = SeriesResourceEntity.Adapter(
-            resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+            resourceTypeAdapter = EnumColumnAdapter(),
             resourceIdAdapter = IntColumnAdapter,
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             startYearAdapter = IntColumnAdapter,
             endYearAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
@@ -182,6 +193,7 @@ object SharedAppModule {
         ),
         storyEntityAdapter = StoryEntity.Adapter(
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             thumbnailAdapter = ImageAdapter(),
             comicsAdapter = ComicsResourceListAdapter(),
@@ -192,9 +204,10 @@ object SharedAppModule {
             originalIssueAdapter = ComicSummaryAdapter()
         ),
         storyResourceEntityAdapter = StoryResourceEntity.Adapter(
-            resourceTypeAdapter = EnumColumnAdapter<ResourceType>(),
+            resourceTypeAdapter = EnumColumnAdapter(),
             resourceIdAdapter = IntColumnAdapter,
             idAdapter = IntColumnAdapter,
+            remoteIdAdapter = IntColumnAdapter,
             modifiedAdapter = LocalDateTimeAdapter(),
             thumbnailAdapter = ImageAdapter(),
             comicsAdapter = ComicsResourceListAdapter(),

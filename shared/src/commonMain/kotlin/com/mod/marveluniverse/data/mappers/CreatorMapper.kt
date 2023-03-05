@@ -5,7 +5,7 @@ import database.creator.CreatorEntity
 import database.creator.CreatorResourceEntity
 
 fun CreatorEntity.toDomainEntity() = Creator(
-    id = id,
+    id = remoteId,
     firstName = firstName,
     middleName = middleName,
     lastName = lastName,
@@ -21,7 +21,7 @@ fun CreatorEntity.toDomainEntity() = Creator(
 )
 
 fun CreatorResourceEntity.toDomainEntity() = Creator(
-    id = id,
+    id = remoteId,
     firstName = firstName,
     middleName = middleName,
     lastName = lastName,

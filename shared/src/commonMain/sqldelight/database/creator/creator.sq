@@ -9,7 +9,8 @@ import kotlin.collections.List;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE creatorEntity(
-    id INTEGER AS Int NOT NULL PRIMARY KEY,
+     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+     remoteId INTEGER AS Int NOT NULL,
     firstName TEXT NOT NULL,
     middleName TEXT NOT NULL,
     lastName TEXT NOT NULL,
@@ -24,10 +25,10 @@ CREATE TABLE creatorEntity(
     events TEXT AS EventsResourceListDto NOT NULL
 );
 
-getCreatorById:
+getCreatorByRemoteId:
 SELECT  *
 FROM creatorEntity
-WHERE id == ?;
+WHERE remoteId == ?;
 
 getCreators:
 SELECT *
@@ -37,6 +38,7 @@ insertCreator:
 INSERT OR REPLACE
 INTO creatorEntity(
     id,
+    remoteId,
     firstName,
     middleName,
     lastName,
@@ -50,7 +52,7 @@ INTO creatorEntity(
     stories,
     events
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearCreators:
 DELETE FROM creatorEntity;

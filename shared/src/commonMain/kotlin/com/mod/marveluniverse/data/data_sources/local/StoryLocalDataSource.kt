@@ -8,7 +8,6 @@ import database.story.StoryEntity
 import database.story.StoryResourceEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
 
 interface StoryLocalDataSource {
     fun getStories(): Flow<List<StoryEntity>>
@@ -18,36 +17,14 @@ interface StoryLocalDataSource {
         resourceId: Int
     ): Flow<List<StoryResourceEntity>>
 
-    fun insertStory(
-        id: Int,
-        title: String,
-        description: String,
-        type: String,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        originalIssue: ComicSummaryDto?
+    fun insertStories(
+        stories: List<StoryDto>
     )
 
-    fun insertStoryResource(
+    fun insertStoriesResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        type: String,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        originalIssue: ComicSummaryDto?
+        stories: List<StoryDto>
     )
 
     fun clearStories()
@@ -71,7 +48,7 @@ class StoryLocalDataSourceImpl(
 
     override fun getStoryById(id: Int): StoryEntity {
         return storyQueries
-            .getStoryById(id)
+            .getStoryByRemoteId(id)
             .executeAsOne()
     }
 
@@ -87,70 +64,58 @@ class StoryLocalDataSourceImpl(
             }
     }
 
-    override fun insertStory(
-        id: Int,
-        title: String,
-        description: String,
-        type: String,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        originalIssue: ComicSummaryDto?
+    override fun insertStories(
+        stories: List<StoryDto>
     ) {
-        storyQueries
-            .insertStory(
-                id = id,
-                title = title,
-                description = description,
-                type = type,
-                modified = modified,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                events = events,
-                characters = characters,
-                creators = creators,
-                originalIssue = originalIssue
-            )
+        storyQueries.transaction {
+            stories.forEach {
+                storyQueries
+                    .insertStory(
+                        id = null,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        type = it.type,
+                        modified = it.modified,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        events = it.events,
+                        characters = it.characters,
+                        creators = it.creators,
+                        originalIssue = it.originalIssue
+                    )
+            }
+        }
     }
 
-    override fun insertStoryResource(
+    override fun insertStoriesResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        type: String,
-        modified: LocalDateTime,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        events: EventsResourceListDto,
-        characters: CharactersResourceListDto,
-        creators: CreatorsResourceListDto,
-        originalIssue: ComicSummaryDto?
+        stories: List<StoryDto>
     ) {
-        storyResourceQueries
-            .insertStoryResource(
-                resourceType = resourceType,
-                resourceId = resourceId,
-                id = id,
-                title = title,
-                description = description,
-                type = type,
-                modified = modified,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                events = events,
-                characters = characters,
-                creators = creators,
-                originalIssue = originalIssue
-            )
+        storyResourceQueries.transaction {
+            stories.forEach {
+                storyResourceQueries
+                    .insertStoryResource(
+                        id = null,
+                        resourceType = resourceType,
+                        resourceId = resourceId,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        type = it.type,
+                        modified = it.modified,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        events = it.events,
+                        characters = it.characters,
+                        creators = it.creators,
+                        originalIssue = it.originalIssue
+                    )
+            }
+        }
     }
 
     override fun clearStories() {

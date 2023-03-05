@@ -5,7 +5,7 @@ import database.character.CharacterEntity
 import database.character.CharacterResourceEntity
 
 fun CharacterEntity.toDomainEntity() = Character(
-    id = id,
+    id = remoteId,
     name = name,
     description = description,
     modified = modified,
@@ -18,7 +18,7 @@ fun CharacterEntity.toDomainEntity() = Character(
 )
 
 fun CharacterResourceEntity.toDomainEntity() = Character(
-    id = id,
+    id = remoteId,
     name = name,
     description = description,
     modified = modified,

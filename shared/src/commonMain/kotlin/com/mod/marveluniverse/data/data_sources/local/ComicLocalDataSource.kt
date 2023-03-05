@@ -8,7 +8,6 @@ import database.comic.ComicEntity
 import database.comic.ComicResourceEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
 
 interface ComicLocalDataSource {
     fun getComics(): Flow<List<ComicEntity>>
@@ -18,48 +17,12 @@ interface ComicLocalDataSource {
         resourceId: Int
     ): Flow<List<ComicResourceEntity>>
 
-    fun insertComic(
-        id: Int,
-        title: String,
-        description: String,
-        modified: LocalDateTime,
-        isbn: String,
-        pageCount: Int,
-        textObjects: List<TextObjectDto>,
-        urls: List<UrlDto>,
-        series: SeriesSummaryDto,
-        variants: List<ComicSummaryDto>,
-        dates: List<ComicDateDto>,
-        prices: List<ComicPriceDto>,
-        thumbnail: ImageDto,
-        images: List<ImageDto>,
-        creators: CreatorsResourceListDto,
-        characters: CharactersResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
-    )
+    fun insertComics(comics: List<ComicDto>)
 
-    fun insertComicResource(
+    fun insertComicsResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        modified: LocalDateTime,
-        isbn: String,
-        pageCount: Int,
-        textObjects: List<TextObjectDto>,
-        urls: List<UrlDto>,
-        series: SeriesSummaryDto,
-        variants: List<ComicSummaryDto>,
-        dates: List<ComicDateDto>,
-        prices: List<ComicPriceDto>,
-        thumbnail: ImageDto,
-        images: List<ImageDto>,
-        creators: CreatorsResourceListDto,
-        characters: CharactersResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+        comics: List<ComicDto>
     )
 
     fun clearComics()
@@ -84,7 +47,7 @@ class ComicLocalDataSourceImpl(
 
     override fun getComicById(id: Int): ComicEntity? {
         return comicQueries
-            .getComicById(id)
+            .getComicByRemoteId(id)
             .executeAsOneOrNull()
     }
 
@@ -100,94 +63,69 @@ class ComicLocalDataSourceImpl(
             }
     }
 
-    override fun insertComic(
-        id: Int,
-        title: String,
-        description: String,
-        modified: LocalDateTime,
-        isbn: String,
-        pageCount: Int,
-        textObjects: List<TextObjectDto>,
-        urls: List<UrlDto>,
-        series: SeriesSummaryDto,
-        variants: List<ComicSummaryDto>,
-        dates: List<ComicDateDto>,
-        prices: List<ComicPriceDto>,
-        thumbnail: ImageDto,
-        images: List<ImageDto>,
-        creators: CreatorsResourceListDto,
-        characters: CharactersResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
-    ) {
-        comicQueries
-            .insertComic(
-                id = id,
-                title = title,
-                description = description,
-                modified = modified,
-                isbn = isbn,
-                pageCount = pageCount,
-                textObjects = textObjects,
-                urls = urls,
-                series = series,
-                variants = variants,
-                dates = dates,
-                prices = prices,
-                thumbnail = thumbnail,
-                images = images,
-                creators = creators,
-                characters = characters,
-                stories = stories,
-                events = events
-            )
+    override fun insertComics(comics: List<ComicDto>) {
+        comicQueries.transaction {
+            comics.forEach {
+                comicQueries
+                    .insertComic(
+                        id = null,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        modified = it.modified,
+                        isbn = it.isbn,
+                        pageCount = it.pageCount,
+                        textObjects = it.textObjects,
+                        urls = it.urls,
+                        series = it.series,
+                        variants = it.variants,
+                        dates = it.dates,
+                        prices = it.prices,
+                        thumbnail = it.thumbnail,
+                        images = it.images,
+                        creators = it.creators,
+                        characters = it.characters,
+                        stories = it.stories,
+                        events = it.events
+                    )
+            }
+        }
     }
 
-    override fun insertComicResource(
+    override fun insertComicsResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        title: String,
-        description: String,
-        modified: LocalDateTime,
-        isbn: String,
-        pageCount: Int,
-        textObjects: List<TextObjectDto>,
-        urls: List<UrlDto>,
-        series: SeriesSummaryDto,
-        variants: List<ComicSummaryDto>,
-        dates: List<ComicDateDto>,
-        prices: List<ComicPriceDto>,
-        thumbnail: ImageDto,
-        images: List<ImageDto>,
-        creators: CreatorsResourceListDto,
-        characters: CharactersResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+        comics: List<ComicDto>
     ) {
-        comicResourceQueries
-            .insertComicResource(
-                resourceType = resourceType,
-                resourceId = resourceId,
-                id = id,
-                title = title,
-                description = description,
-                modified = modified,
-                isbn = isbn,
-                pageCount = pageCount,
-                textObjects = textObjects,
-                urls = urls,
-                series = series,
-                variants = variants,
-                dates = dates,
-                prices = prices,
-                thumbnail = thumbnail,
-                images = images,
-                creators = creators,
-                characters = characters,
-                stories = stories,
-                events = events
-            )
+        comicResourceQueries.transaction {
+            comics.forEach {
+                comicResourceQueries
+                    .insertComicResource(
+                        id = null,
+                        resourceType = resourceType,
+                        resourceId = resourceId,
+                        remoteId = it.id,
+                        title = it.title,
+                        description = it.description,
+                        modified = it.modified,
+                        isbn = it.isbn,
+                        pageCount = it.pageCount,
+                        textObjects = it.textObjects,
+                        urls = it.urls,
+                        series = it.series,
+                        variants = it.variants,
+                        dates = it.dates,
+                        prices = it.prices,
+                        thumbnail = it.thumbnail,
+                        images = it.images,
+                        creators = it.creators,
+                        characters = it.characters,
+                        stories = it.stories,
+                        events = it.events
+                    )
+            }
+        }
+
     }
 
     override fun clearComics() {

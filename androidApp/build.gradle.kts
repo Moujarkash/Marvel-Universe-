@@ -41,16 +41,25 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared"))
-    implementation("androidx.compose.ui:ui:1.3.1")
-    implementation("androidx.compose.ui:ui-tooling:1.3.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.3.1")
-    implementation("androidx.compose.foundation:foundation:1.3.1")
-    implementation("androidx.compose.material:material:1.3.1")
-    implementation("androidx.activity:activity-compose:1.6.1")
+    val composeVersion = "1.3.1"
+    val hiltVersion = "2.44"
+    val hiltCompilerVersion = "1.0.0"
 
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation(project(":shared"))
+    implementation("androidx.compose.ui:ui:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+    implementation("androidx.compose.foundation:foundation:$composeVersion")
+    implementation("androidx.compose.material:material:$composeVersion")
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    kapt("androidx.hilt:hilt-compiler:$hiltCompilerVersion")
+    implementation("androidx.hilt:hilt-navigation-compose:$hiltCompilerVersion")
 
     implementation("io.ktor:ktor-client-android:2.2.3")
 }

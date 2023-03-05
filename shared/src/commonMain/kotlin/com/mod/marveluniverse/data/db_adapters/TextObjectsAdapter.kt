@@ -11,13 +11,13 @@ class TextObjectsAdapter : ColumnAdapter<List<TextObjectDto>, String> {
         if (databaseValue.isEmpty())
             return listOf()
 
-        return databaseValue.split(",").map { json ->
+        return databaseValue.split(",,,").map { json ->
             Json.decodeFromString(json)
         }
     }
 
     override fun encode(value: List<TextObjectDto>): String {
-        return value.joinToString(separator = ",") {
+        return value.joinToString(separator = ",,,") {
             Json.encodeToString(it)
         }
     }

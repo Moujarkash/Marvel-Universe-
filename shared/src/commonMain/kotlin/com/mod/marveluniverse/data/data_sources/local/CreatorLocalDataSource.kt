@@ -8,7 +8,6 @@ import database.creator.CreatorEntity
 import database.creator.CreatorResourceEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDateTime
 
 interface CreatorLocalDataSource {
     fun getCreators(): Flow<List<CreatorEntity>>
@@ -18,38 +17,14 @@ interface CreatorLocalDataSource {
         resourceId: Int
     ): Flow<List<CreatorResourceEntity>>
 
-    fun insertCreator(
-        id: Int,
-        firstName: String,
-        middleName: String,
-        lastName: String,
-        suffix: String,
-        fullName: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+    fun insertCreators(
+        creators: List<CreatorDto>
     )
 
-    fun insertCreatorResource(
+    fun insertCreatorsResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        firstName: String,
-        middleName: String,
-        lastName: String,
-        suffix: String,
-        fullName: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+        creators: List<CreatorDto>
     )
 
     fun clearCreators()
@@ -73,7 +48,7 @@ class CreatorLocalDataSourceImpl(
 
     override fun getCreatorById(id: Int): CreatorEntity {
         return creatorQueries
-            .getCreatorById(id)
+            .getCreatorByRemoteId(id)
             .executeAsOne()
     }
 
@@ -89,74 +64,60 @@ class CreatorLocalDataSourceImpl(
             }
     }
 
-    override fun insertCreator(
-        id: Int,
-        firstName: String,
-        middleName: String,
-        lastName: String,
-        suffix: String,
-        fullName: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+    override fun insertCreators(
+        creators: List<CreatorDto>
     ) {
-        creatorQueries
-            .insertCreator(
-                id = id,
-                firstName = firstName,
-                middleName = middleName,
-                lastName = lastName,
-                suffix = suffix,
-                fullName = fullName,
-                modified = modified,
-                urls = urls,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                stories = stories,
-                events = events
-            )
+        creatorQueries.transaction {
+            creators.forEach {
+                creatorQueries
+                    .insertCreator(
+                        id = null,
+                        remoteId = it.id,
+                        firstName = it.firstName,
+                        middleName = it.middleName,
+                        lastName = it.lastName,
+                        suffix = it.suffix,
+                        fullName = it.fullName,
+                        modified = it.modified,
+                        urls = it.urls,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        stories = it.stories,
+                        events = it.events
+                    )
+            }
+        }
     }
 
-    override fun insertCreatorResource(
+    override fun insertCreatorsResource(
         resourceType: ResourceType,
         resourceId: Int,
-        id: Int,
-        firstName: String,
-        middleName: String,
-        lastName: String,
-        suffix: String,
-        fullName: String,
-        modified: LocalDateTime,
-        urls: List<UrlDto>,
-        thumbnail: ImageDto,
-        comics: ComicsResourceListDto,
-        series: SeriesResourceListDto,
-        stories: StoriesResourceListDto,
-        events: EventsResourceListDto
+        creators: List<CreatorDto>
     ) {
-        creatorResourceQueries
-            .insertCreatorResource(
-                resourceType = resourceType,
-                resourceId = resourceId,
-                id = id,
-                firstName = firstName,
-                middleName = middleName,
-                lastName = lastName,
-                suffix = suffix,
-                fullName = fullName,
-                modified = modified,
-                urls = urls,
-                thumbnail = thumbnail,
-                comics = comics,
-                series = series,
-                stories = stories,
-                events = events
-            )
+        creatorResourceQueries.transaction {
+            creators.forEach {
+                creatorResourceQueries
+                    .insertCreatorResource(
+                        id = null,
+                        resourceType = resourceType,
+                        resourceId = resourceId,
+                        remoteId = it.id,
+                        firstName = it.firstName,
+                        middleName = it.middleName,
+                        lastName = it.lastName,
+                        suffix = it.suffix,
+                        fullName = it.fullName,
+                        modified = it.modified,
+                        urls = it.urls,
+                        thumbnail = it.thumbnail,
+                        comics = it.comics,
+                        series = it.series,
+                        stories = it.stories,
+                        events = it.events
+                    )
+            }
+        }
     }
 
     override fun clearCreators() {
