@@ -32,46 +32,87 @@ class ComicListViewModel(
 
     private val _limit = 20
 
+    init {
+        requestComics(
+            isRefresh = false,
+            isInit = true,
+            query = null
+        )
+    }
+
     fun onEvent(event: ComicListEvent) {
         when (event) {
             is ComicListEvent.RequestComics -> {
+                requestComics(
+                    isRefresh = _state.value.isRefreshing,
+                    isInit = false,
+                    query = _state.value.query
+                )
+            }
+            is ComicListEvent.SearchComics -> {
                 _state.update {
                     it.copy(
-                        isFetchingComics = !event.isRefresh,
-                        isRefreshing = event.isRefresh,
+                        query = event.query,
+                    )
+                }
+                requestComics(
+                    isRefresh = false,
+                    isInit = true,
+                    query = event.query
+                )
+            }
+            ComicListEvent.SearchTextCleared -> {
+                _state.update {
+                    it.copy(
+                        query = null,
+                    )
+                }
+                requestComics(
+                    isRefresh = false,
+                    isInit = true,
+                    query = null
+                )
+            }
+            else -> Unit
+        }
+    }
+
+    private fun requestComics(isRefresh: Boolean, isInit: Boolean, query: String?) {
+        _state.update {
+            it.copy(
+                isFetchingComics = !isRefresh,
+                isRefreshing = isRefresh,
+                error = null
+            )
+        }
+
+        viewModelScope.launch {
+            try {
+                comicRepository.requestComics(
+                    query = query,
+                    limit = _limit,
+                    offset = if (isRefresh || isInit) 0 else _state.value.comics.size
+                )
+
+                _state.update {
+                    it.copy(
+                        isFetchingComics = false,
+                        isRefreshing = false,
                         error = null
                     )
                 }
-
-                viewModelScope.launch {
-                    try {
-                        comicRepository.requestComics(
-                            query = event.query,
-                            limit = _limit,
-                            offset = if (event.isRefresh) 0 else _state.value.comics.size
-                        )
-
-                        _state.update {
-                            it.copy(
-                                isFetchingComics = false,
-                                isRefreshing = false,
-                                error = null
-                            )
-                        }
-                    } catch (e: Exception) {
-                        val defaultErrorMessage = "Something went wrong!"
-                        val errorMessage: String = when (e) {
-                            is AppException -> e.errorMessage ?: defaultErrorMessage
-                            else -> defaultErrorMessage
-                        }
-                        _state.update {
-                            it.copy(
-                                isFetchingComics = false,
-                                isRefreshing = false,
-                                error = errorMessage
-                            )
-                        }
-                    }
+            } catch (e: Exception) {
+                val defaultErrorMessage = "Something went wrong!"
+                val errorMessage: String = when (e) {
+                    is AppException -> e.errorMessage ?: defaultErrorMessage
+                    else -> defaultErrorMessage
+                }
+                _state.update {
+                    it.copy(
+                        isFetchingComics = false,
+                        isRefreshing = false,
+                        error = errorMessage
+                    )
                 }
             }
         }

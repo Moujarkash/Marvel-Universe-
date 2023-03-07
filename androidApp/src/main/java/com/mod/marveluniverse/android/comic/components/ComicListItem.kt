@@ -35,7 +35,7 @@ fun ComicListItem(
                     .data(comic.thumbnail.getLandscapeMode())
                     .crossfade(true)
                     .build(),
-//                placeholder = painterResource(R.drawable.placeholder),
+                placeholder = painterResource(R.drawable.marvel_header),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

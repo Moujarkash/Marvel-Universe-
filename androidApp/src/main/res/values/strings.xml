@@ -4,4 +4,9 @@
     <string name="error_message">Something went wrong!</string>
     <string name="copyright_message">Data provided by Marvel. © 2023 MARVEL</string>
     <string name="comics">Comics</string>
+    <string name="characters">Characters</string>
+    <string name="creators">Creators</string>
+    <string name="events">Events</string>
+    <string name="series">Series</string>
+    <string name="stories">Stories</string>
 </resources>
