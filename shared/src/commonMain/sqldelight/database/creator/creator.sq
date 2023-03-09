@@ -28,7 +28,7 @@ CREATE TABLE creatorEntity(
 getCreatorByRemoteId:
 SELECT  *
 FROM creatorEntity
-WHERE remoteId == ?;
+WHERE remoteId = ?;
 
 getCreators:
 SELECT *

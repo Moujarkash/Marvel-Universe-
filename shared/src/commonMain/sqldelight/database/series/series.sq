@@ -33,7 +33,7 @@ CREATE TABLE seriesEntity(
 getSeriesByRemoteId:
 SELECT  *
 FROM seriesEntity
-WHERE remoteId == ?;
+WHERE remoteId = ?;
 
 getSeries:
 SELECT *

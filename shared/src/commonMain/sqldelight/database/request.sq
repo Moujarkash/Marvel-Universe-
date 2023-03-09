@@ -1,16 +1,19 @@
 import com.mod.marveluniverse.domain.entites.RequestType;
 import com.mod.marveluniverse.domain.entites.ResourceType;
+import com.mod.marveluniverse.domain.entites.Sort;
 import kotlin.Int;
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE requestEntity(
     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+    code TEXT NOT NULL,
     type TEXT AS RequestType NOT NULL,
     resourceType TEXT AS ResourceType NOT NULL,
     resourceId INTEGER AS Int,
     relatedEntity TEXT AS ResourceType,
     relatedEntityId INTEGER AS Int,
     query TEXT,
+    sort TEXT AS Sort,
     totalResults INTEGER AS Int NOT NULL,
     recordsLimit INTEGER AS Int,
     offset INTEGER AS Int,
@@ -22,32 +25,39 @@ CREATE TABLE requestEntity(
 getRequest:
 SELECT *
 FROM requestEntity
-WHERE type = ? AND
+WHERE
+type = ? AND
 resourceType = ? AND
 resourceId = ? AND
 relatedEntity = ? AND
 relatedEntityId = ? AND
 query = ? AND
+sort = ? AND
 recordsLimit = ? AND
 offset = ?;
 
-getRequestsNotMatchingQuery:
-SELECT *
+getRequestCode:
+SELECT code
 FROM requestEntity
-WHERE type = ? AND
+WHERE
+type = ? AND
 resourceType = ? AND
-query != ?;
+query = ? AND
+sort = ?
+LIMIT 1;
 
 insertRequest:
 INSERT OR REPLACE
 INTO requestEntity(
     id,
+    code,
     type,
     resourceType,
     resourceId,
     relatedEntity,
     relatedEntityId,
     query,
+    sort,
     totalResults,
     recordsLimit,
     offset,
@@ -55,8 +65,8 @@ INTO requestEntity(
     createdAt,
     updatedAt
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-deleteRequestsByTypeAndResource:
+deleteRequestsByCode:
 DELETE FROM requestEntity
-WHERE type = ? AND resourceType = ?;
+WHERE code = ?;

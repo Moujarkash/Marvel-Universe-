@@ -32,7 +32,7 @@ CREATE TABLE eventEntity(
 getEventByRemoteId:
 SELECT  *
 FROM eventEntity
-WHERE remoteId == ?;
+WHERE remoteId = ?;
 
 getEvents:
 SELECT *

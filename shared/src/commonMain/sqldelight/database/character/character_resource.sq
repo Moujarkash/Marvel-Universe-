@@ -30,7 +30,7 @@ CREATE TABLE characterResourceEntity(
 getCharactersResourceByType:
 SELECT  *
 FROM characterResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;
 
 insertCharacterResource:
 INSERT OR REPLACE
@@ -54,4 +54,4 @@ VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 clearCharactersResource:
 DELETE
 FROM characterResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;

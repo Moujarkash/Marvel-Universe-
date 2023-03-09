@@ -34,7 +34,7 @@ CREATE TABLE creatorResourceEntity(
 getCreatorsResourceByType:
 SELECT  *
 FROM creatorResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;
 
 insertCreatorResource:
 INSERT OR REPLACE
@@ -61,4 +61,4 @@ VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 clearCreatorsResource:
 DELETE
 FROM creatorResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;

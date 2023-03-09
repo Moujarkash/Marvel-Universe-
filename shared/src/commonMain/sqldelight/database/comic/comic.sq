@@ -15,6 +15,7 @@ import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE comicEntity(
     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+    requestCode TEXT NOT NULL,
     remoteId INTEGER AS Int NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -38,7 +39,12 @@ CREATE TABLE comicEntity(
 getComicByRemoteId:
 SELECT  *
 FROM comicEntity
-WHERE remoteId == ?;
+WHERE remoteId = ?;
+
+getComicsByRequestCode:
+SELECT *
+FROM comicEntity
+WHERE requestCode = ?;
 
 getComics:
 SELECT *
@@ -48,6 +54,7 @@ insertComic:
 INSERT OR REPLACE
 INTO comicEntity(
     id,
+    requestCode,
     remoteId,
     title,
     description,
@@ -67,7 +74,13 @@ INTO comicEntity(
     stories,
     events
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-clearComics:
-DELETE FROM comicEntity;
+clearRequestComics:
+DELETE
+FROM comicEntity
+WHERE requestCode = ?;
+
+clearComicsByRemoteIdsAndRequestCode:
+DELETE FROM comicEntity
+WHERE remoteId IN ? AND requestCode = ?;

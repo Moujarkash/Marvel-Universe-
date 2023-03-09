@@ -37,7 +37,7 @@ resourceType TEXT AS ResourceType NOT NULL,
 getEventsResourceByType:
 SELECT  *
 FROM eventResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;
 
 insertEventResource:
 INSERT OR REPLACE
@@ -66,4 +66,4 @@ VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 clearEventsResource:
 DELETE
 FROM eventResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;

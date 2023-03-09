@@ -27,7 +27,7 @@ CREATE TABLE storyEntity(
 getStoryByRemoteId:
 SELECT  *
 FROM storyEntity
-WHERE remoteId == ?;
+WHERE remoteId = ?;
 
 getStories:
 SELECT *

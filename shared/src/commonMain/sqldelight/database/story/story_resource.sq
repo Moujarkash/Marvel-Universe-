@@ -32,7 +32,7 @@ resourceType TEXT AS ResourceType NOT NULL,
 getStoriesResourceByType:
 SELECT  *
 FROM storyResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;
 
 insertStoryResource:
 INSERT OR REPLACE
@@ -58,4 +58,4 @@ VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 clearStoriesResource:
 DELETE
 FROM storyResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;

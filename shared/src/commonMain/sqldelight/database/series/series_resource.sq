@@ -38,7 +38,7 @@ resourceType TEXT AS ResourceType NOT NULL,
 getSeriesResourceByType:
 SELECT  *
 FROM seriesResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;
 
 insertSeriesResource:
 INSERT OR REPLACE
@@ -68,4 +68,4 @@ VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 clearSeriesResource:
 DELETE
 FROM seriesResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;

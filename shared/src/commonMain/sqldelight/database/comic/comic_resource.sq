@@ -43,7 +43,7 @@ CREATE TABLE comicResourceEntity(
 getComicsResourceByType:
 SELECT  *
 FROM comicResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;
 
 insertComicResource:
 INSERT OR REPLACE
@@ -75,4 +75,4 @@ VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 clearComicsResource:
 DELETE
 FROM comicResourceEntity
-WHERE resourceType == ? AND resourceId == ?;
+WHERE resourceType = ? AND resourceId = ?;

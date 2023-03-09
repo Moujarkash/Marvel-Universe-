@@ -1,5 +1,7 @@
 package com.mod.marveluniverse.presentation.comic.list
 
+import com.mod.marveluniverse.domain.entites.Comic
+import com.mod.marveluniverse.domain.entites.Sort
 import com.mod.marveluniverse.domain.error.AppException
 import com.mod.marveluniverse.domain.repositories.ComicRepository
 import com.mod.marveluniverse.domain.utils.flows.toCommonStateFlow
@@ -14,10 +16,11 @@ class ComicListViewModel(
 ) {
     private val viewModelScope = coroutineScope ?: CoroutineScope(Dispatchers.Main)
 
+    private val _comics = MutableStateFlow(emptyList<Comic>())
     private val _state = MutableStateFlow(ComicListState())
     val state = combine(
         _state,
-        comicRepository.getComics()
+        _comics
     ) { state, comics ->
         if (state.comics != comics) {
             _state.update {
@@ -36,17 +39,27 @@ class ComicListViewModel(
         requestComics(
             isRefresh = false,
             isInit = true,
-            query = null
+            query = null,
+            sort = _state.value.sort
         )
     }
 
     fun onEvent(event: ComicListEvent) {
         when (event) {
-            is ComicListEvent.RequestComics -> {
+            ComicListEvent.RequestComics -> {
                 requestComics(
-                    isRefresh = _state.value.isRefreshing,
+                    isRefresh = false,
                     isInit = false,
-                    query = _state.value.query
+                    query = _state.value.query,
+                    sort = _state.value.sort
+                )
+            }
+            ComicListEvent.RefreshComics -> {
+                requestComics(
+                    isRefresh = true,
+                    isInit = false,
+                    query = _state.value.query,
+                    sort = _state.value.sort
                 )
             }
             is ComicListEvent.SearchComics -> {
@@ -58,7 +71,8 @@ class ComicListViewModel(
                 requestComics(
                     isRefresh = false,
                     isInit = true,
-                    query = event.query
+                    query = event.query,
+                    sort = _state.value.sort
                 )
             }
             ComicListEvent.SearchTextCleared -> {
@@ -70,14 +84,15 @@ class ComicListViewModel(
                 requestComics(
                     isRefresh = false,
                     isInit = true,
-                    query = null
+                    query = null,
+                    sort = _state.value.sort
                 )
             }
             else -> Unit
         }
     }
 
-    private fun requestComics(isRefresh: Boolean, isInit: Boolean, query: String?) {
+    private fun requestComics(isRefresh: Boolean, isInit: Boolean, query: String?, sort: Sort) {
         _state.update {
             it.copy(
                 isFetchingComics = !isRefresh,
@@ -90,6 +105,7 @@ class ComicListViewModel(
             try {
                 comicRepository.requestComics(
                     query = query,
+                    sort = sort,
                     limit = _limit,
                     offset = if (isRefresh || isInit) 0 else _state.value.comics.size
                 )
@@ -114,6 +130,10 @@ class ComicListViewModel(
                         error = errorMessage
                     )
                 }
+            }
+
+            comicRepository.getComics(_state.value.query, _state.value.sort).collect {
+                _comics.value = it
             }
         }
     }

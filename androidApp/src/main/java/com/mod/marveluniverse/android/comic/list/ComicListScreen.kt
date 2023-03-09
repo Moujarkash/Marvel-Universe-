@@ -38,7 +38,7 @@ fun ComicListScreen(
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(
         state.isRefreshing,
-        { onEvent(ComicListEvent.RequestComics(isRefresh = true)) })
+        { onEvent(ComicListEvent.RefreshComics) })
     val searchTextState = remember { mutableStateOf(TextFieldValue("")) }
 
     Scaffold(
@@ -92,10 +92,10 @@ fun ComicListScreen(
                 if (state.comics.isEmpty()) {
                     if (state.isFetchingComics) {
                         LoadingView(modifier = Modifier.fillMaxSize())
-                    }
-
-                    if (state.error != null) {
+                    } else if (state.error != null) {
                         ErrorView(modifier = Modifier.fillMaxSize())
+                    } else {
+                        EmptyView(modifier = Modifier.fillMaxSize())
                     }
                 } else {
 
@@ -114,7 +114,7 @@ fun ComicListScreen(
                             if (index >= state.comics.size - 1
                                 && !state.isFetchingComics
                             ) {
-                                onEvent(ComicListEvent.RequestComics())
+                                onEvent(ComicListEvent.RequestComics)
                             }
                         }
 

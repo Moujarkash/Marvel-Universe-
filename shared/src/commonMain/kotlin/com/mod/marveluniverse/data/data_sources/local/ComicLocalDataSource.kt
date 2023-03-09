@@ -10,23 +10,25 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface ComicLocalDataSource {
-    fun getComics(): Flow<List<ComicEntity>>
-    fun getComicById(id: Int): ComicEntity?
-    fun getComicsByResource(
+    suspend fun getComics(): Flow<List<ComicEntity>>
+    suspend fun getComicsByRequestCode(requestCode: String): Flow<List<ComicEntity>>
+    suspend fun getComicById(id: Int): ComicEntity?
+    suspend fun getComicsByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<ComicResourceEntity>>
 
-    fun insertComics(comics: List<ComicDto>)
+    suspend fun insertComics(requestCode: String, comics: List<ComicDto>)
 
-    fun insertComicsResource(
+    suspend fun insertComicsResource(
         resourceType: ResourceType,
         resourceId: Int,
         comics: List<ComicDto>
     )
 
-    fun clearComics()
-    fun clearComicsResource(resourceType: ResourceType, resourceId: Int)
+    suspend fun clearComicsByRequestCode(requestCode: String)
+    suspend fun clearComicsByRemoteIdsAndRequestCode(remoteIds: List<Int>, requestCode: String)
+    suspend fun clearComicsResource(resourceType: ResourceType, resourceId: Int)
 }
 
 class ComicLocalDataSourceImpl(
@@ -35,7 +37,7 @@ class ComicLocalDataSourceImpl(
     private val comicQueries = db.comicQueries
     private val comicResourceQueries = db.comic_resourceQueries
 
-    override fun getComics(): Flow<List<ComicEntity>> {
+    override suspend fun getComics(): Flow<List<ComicEntity>> {
         return comicQueries
             .getComics()
             .asFlow()
@@ -44,14 +46,23 @@ class ComicLocalDataSourceImpl(
             }
     }
 
+    override suspend fun getComicsByRequestCode(requestCode: String): Flow<List<ComicEntity>> {
+        return comicQueries
+            .getComicsByRequestCode(requestCode)
+            .asFlow()
+            .map { query ->
+                query.executeAsList()
+            }
+    }
 
-    override fun getComicById(id: Int): ComicEntity? {
+
+    override suspend fun getComicById(id: Int): ComicEntity? {
         return comicQueries
             .getComicByRemoteId(id)
             .executeAsOneOrNull()
     }
 
-    override fun getComicsByResource(
+    override suspend fun getComicsByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<ComicResourceEntity>> {
@@ -63,12 +74,13 @@ class ComicLocalDataSourceImpl(
             }
     }
 
-    override fun insertComics(comics: List<ComicDto>) {
+    override suspend fun insertComics(requestCode: String, comics: List<ComicDto>) {
         comicQueries.transaction {
             comics.forEach {
                 comicQueries
                     .insertComic(
                         id = null,
+                        requestCode = requestCode,
                         remoteId = it.id,
                         title = it.title,
                         description = it.description,
@@ -92,7 +104,7 @@ class ComicLocalDataSourceImpl(
         }
     }
 
-    override fun insertComicsResource(
+    override suspend fun insertComicsResource(
         resourceType: ResourceType,
         resourceId: Int,
         comics: List<ComicDto>
@@ -128,11 +140,18 @@ class ComicLocalDataSourceImpl(
 
     }
 
-    override fun clearComics() {
-        comicQueries.clearComics()
+    override suspend fun clearComicsByRequestCode(requestCode: String) {
+        comicQueries.clearRequestComics(requestCode)
     }
 
-    override fun clearComicsResource(resourceType: ResourceType, resourceId: Int) {
+    override suspend fun clearComicsByRemoteIdsAndRequestCode(
+        remoteIds: List<Int>,
+        requestCode: String
+    ) {
+        comicQueries.clearComicsByRemoteIdsAndRequestCode(remoteIds, requestCode)
+    }
+
+    override suspend fun clearComicsResource(resourceType: ResourceType, resourceId: Int) {
         comicResourceQueries.clearComicsResource(
             resourceType = resourceType,
             resourceId = resourceId

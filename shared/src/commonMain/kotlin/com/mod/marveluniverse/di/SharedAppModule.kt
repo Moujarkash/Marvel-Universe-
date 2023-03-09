@@ -5,7 +5,6 @@ import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.db.SqlDriver
 import com.mod.marveluniverse.data.db_adapters.*
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
-import com.mod.marveluniverse.domain.entites.ResourceType
 import database.RequestEntity
 import database.character.CharacterEntity
 import database.character.CharacterResourceEntity
@@ -19,7 +18,6 @@ import database.series.SeriesEntity
 import database.series.SeriesResourceEntity
 import database.story.StoryEntity
 import database.story.StoryResourceEntity
-import io.ktor.client.*
 
 object SharedAppModule {
     fun provideAppDatabase(driver: SqlDriver) = MarvelUniverseDatabase(
@@ -31,6 +29,7 @@ object SharedAppModule {
             resourceIdAdapter = IntColumnAdapter,
             relatedEntityAdapter = EnumColumnAdapter(),
             relatedEntityIdAdapter = IntColumnAdapter,
+            sortAdapter = EnumColumnAdapter(),
             totalResultsAdapter = IntColumnAdapter,
             recordsLimitAdapter = IntColumnAdapter,
             offsetAdapter = IntColumnAdapter,
