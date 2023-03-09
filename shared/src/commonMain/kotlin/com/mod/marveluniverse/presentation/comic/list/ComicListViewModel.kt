@@ -88,6 +88,19 @@ class ComicListViewModel(
                     sort = _state.value.sort
                 )
             }
+            is ComicListEvent.SortComics -> {
+                _state.update {
+                    it.copy(
+                        sort = event.sort,
+                    )
+                }
+                requestComics(
+                    isRefresh = false,
+                    isInit = true,
+                    query = _state.value.query,
+                    sort = event.sort
+                )
+            }
             else -> Unit
         }
     }

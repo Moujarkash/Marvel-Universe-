@@ -1,4 +1,5 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class,
+@file:OptIn(
+    ExperimentalMaterialApi::class, ExperimentalMaterialApi::class,
     ExperimentalMaterialApi::class
 )
 
@@ -7,12 +8,10 @@ package com.mod.marveluniverse.android.comic.list
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.mod.marveluniverse.android.R
 import com.mod.marveluniverse.android.comic.components.ComicListItem
 import com.mod.marveluniverse.android.core.components.*
+import com.mod.marveluniverse.domain.entites.Sort
 import com.mod.marveluniverse.presentation.comic.list.ComicListEvent
 import com.mod.marveluniverse.presentation.comic.list.ComicListState
 import kotlinx.coroutines.launch
@@ -58,6 +58,13 @@ fun ComicListScreen(
         drawerContent = {
             AppDrawer {
                 onEvent(ComicListEvent.DrawerItemClicked(it))
+            }
+        },
+        floatingActionButton = {
+            SortFloatingButton(
+                state.sort
+            ) {
+                onEvent(ComicListEvent.SortComics(if (state.sort == Sort.ASCENDING) Sort.DESCENDING else Sort.ASCENDING))
             }
         },
         bottomBar = {
