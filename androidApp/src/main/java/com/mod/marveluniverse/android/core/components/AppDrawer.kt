@@ -32,7 +32,7 @@ fun AppDrawer(
         Image(
             painter = painterResource(id = R.drawable.marvel_header),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
