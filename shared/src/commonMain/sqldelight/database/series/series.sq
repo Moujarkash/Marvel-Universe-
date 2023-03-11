@@ -12,6 +12,7 @@ import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE seriesEntity(
     id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+              requestCode TEXT NOT NULL,
     remoteId INTEGER AS Int NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -35,6 +36,11 @@ SELECT  *
 FROM seriesEntity
 WHERE remoteId = ?;
 
+getSeriesByRequestCode:
+SELECT *
+FROM seriesEntity
+WHERE requestCode = ?;
+
 getSeries:
 SELECT *
 FROM seriesEntity;
@@ -43,6 +49,7 @@ insertSeries:
 INSERT OR REPLACE
 INTO seriesEntity(
     id,
+    requestCode,
     remoteId,
     title,
     description,
@@ -60,7 +67,12 @@ INTO seriesEntity(
     next,
     previous
 )
-VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-clearSeries:
-DELETE FROM seriesEntity;
+clearRequestSeries:
+DELETE FROM seriesEntity
+WHERE requestCode = ?;
+
+clearSeriesByRemoteIdsAndRequestCode:
+DELETE FROM seriesEntity
+WHERE remoteId IN ? AND requestCode = ?;

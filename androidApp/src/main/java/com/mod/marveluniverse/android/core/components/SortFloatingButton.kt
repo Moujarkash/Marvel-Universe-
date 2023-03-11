@@ -23,7 +23,7 @@ fun SortFloatingButton(
         contentColor = MaterialTheme.colors.onPrimary,
         onClick = onClick) {
         val resourceId =
-            if (sort == Sort.ASCENDING) R.drawable.sort_az else R.drawable.sort_za
+            if (sort == Sort.ASCENDING) R.drawable.sort_asc else R.drawable.sort_des
         Icon(
             painter = painterResource(id = resourceId),
             contentDescription = null,

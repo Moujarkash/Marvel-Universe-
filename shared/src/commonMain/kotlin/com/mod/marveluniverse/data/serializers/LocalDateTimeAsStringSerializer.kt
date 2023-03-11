@@ -22,6 +22,6 @@ object LocalDateTimeAsStringSerializer : KSerializer<LocalDateTime> {
         if (stringValue.isEmpty()
             || stringValue.startsWith("-")) return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-        return stringValue.substring(0, 19).toLocalDateTime()
+        return stringValue.substring(0, 19).replace(" ", "T").toLocalDateTime()
     }
 }

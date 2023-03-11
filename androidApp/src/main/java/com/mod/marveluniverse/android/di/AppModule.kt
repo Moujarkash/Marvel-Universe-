@@ -6,9 +6,9 @@ import com.mod.marveluniverse.data.config.DatabaseDriverFactory
 import com.mod.marveluniverse.data.config.HttpClientFactory
 import com.mod.marveluniverse.data.data_sources.local.*
 import com.mod.marveluniverse.data.data_sources.remote.*
-import com.mod.marveluniverse.data.repositories.ComicRepositoryImpl
+import com.mod.marveluniverse.data.repositories.*
 import com.mod.marveluniverse.di.SharedAppModule
-import com.mod.marveluniverse.domain.repositories.ComicRepository
+import com.mod.marveluniverse.domain.repositories.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -118,6 +118,66 @@ object AppModule {
     ): ComicRepository {
         return ComicRepositoryImpl(
             requestLocalDataSource, comicLocalDataSource, comicRemoteDataSource
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideCharacterRepository(
+        requestLocalDataSource: RequestLocalDataSource,
+        characterRemoteDataSource: CharacterRemoteDataSource,
+        characterLocalDataSource: CharacterLocalDataSource
+    ): CharacterRepository {
+        return CharacterRepositoryImpl(
+            requestLocalDataSource, characterLocalDataSource, characterRemoteDataSource
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideCreatorRepository(
+        requestLocalDataSource: RequestLocalDataSource,
+        creatorRemoteDataSource: CreatorRemoteDataSource,
+        creatorLocalDataSource: CreatorLocalDataSource
+    ): CreatorRepository {
+        return CreatorRepositoryImpl(
+            requestLocalDataSource, creatorLocalDataSource, creatorRemoteDataSource
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventRepository(
+        requestLocalDataSource: RequestLocalDataSource,
+        eventRemoteDataSource: EventRemoteDataSource,
+        eventLocalDataSource: EventLocalDataSource
+    ): EventRepository {
+        return EventRepositoryImpl(
+            requestLocalDataSource, eventLocalDataSource, eventRemoteDataSource
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSeriesRepository(
+        requestLocalDataSource: RequestLocalDataSource,
+        seriesRemoteDataSource: SeriesRemoteDataSource,
+        seriesLocalDataSource: SeriesLocalDataSource
+    ): SeriesRepository {
+        return SeriesRepositoryImpl(
+            requestLocalDataSource, seriesLocalDataSource, seriesRemoteDataSource
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideStoryRepository(
+        requestLocalDataSource: RequestLocalDataSource,
+        storyRemoteDataSource: StoryRemoteDataSource,
+        storyLocalDataSource: StoryLocalDataSource
+    ): StoryRepository {
+        return StoryRepositoryImpl(
+            requestLocalDataSource, storyLocalDataSource, storyRemoteDataSource
         )
     }
 }

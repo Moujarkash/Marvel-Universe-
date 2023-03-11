@@ -10,25 +10,28 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface CharacterLocalDataSource {
-    fun getCharacters(): Flow<List<CharacterEntity>>
-    fun getCharacterById(id: Int): CharacterEntity
-    fun getCharactersByResource(
+    suspend fun getCharacters(): Flow<List<CharacterEntity>>
+    suspend fun getCharactersByRequestCode(requestCode: String): Flow<List<CharacterEntity>>
+    suspend fun getCharacterById(id: Int): CharacterEntity
+    suspend fun getCharactersByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<CharacterResourceEntity>>
 
-    fun insertCharacters(
+    suspend fun insertCharacters(
+        requestCode: String,
         characters: List<CharacterDto>
     )
 
-    fun insertCharactersResource(
+    suspend fun insertCharactersResource(
         resourceType: ResourceType,
         resourceId: Int,
         characters: List<CharacterDto>
     )
 
-    fun clearCharacters()
-    fun clearCharactersResource(resourceType: ResourceType, resourceId: Int)
+    suspend fun clearCharactersByRequestCode(requestCode: String)
+    suspend fun clearCharactersByRemoteIdsAndRequestCode(remoteIds: List<Int>, requestCode: String)
+    suspend fun clearCharactersResource(resourceType: ResourceType, resourceId: Int)
 }
 
 class CharacterLocalDataSourceImpl(
@@ -37,7 +40,7 @@ class CharacterLocalDataSourceImpl(
     private val characterQueries = db.characterQueries
     private val characterResourceQueries = db.character_resourceQueries
 
-    override fun getCharacters(): Flow<List<CharacterEntity>> {
+    override suspend fun getCharacters(): Flow<List<CharacterEntity>> {
         return characterQueries
             .getCharacters()
             .asFlow()
@@ -46,13 +49,22 @@ class CharacterLocalDataSourceImpl(
             }
     }
 
-    override fun getCharacterById(id: Int): CharacterEntity {
+    override suspend fun getCharactersByRequestCode(requestCode: String): Flow<List<CharacterEntity>> {
+        return characterQueries
+            .getCharactersByRequestCode(requestCode)
+            .asFlow()
+            .map { query ->
+                query.executeAsList()
+            }
+    }
+
+    override suspend fun getCharacterById(id: Int): CharacterEntity {
         return characterQueries
             .getCharacterByRemoteId(id)
             .executeAsOne()
     }
 
-    override fun getCharactersByResource(
+    override suspend fun getCharactersByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<CharacterResourceEntity>> {
@@ -64,7 +76,8 @@ class CharacterLocalDataSourceImpl(
             }
     }
 
-    override fun insertCharacters(
+    override suspend fun insertCharacters(
+        requestCode: String,
         characters: List<CharacterDto>
     ) {
         characterQueries.transaction {
@@ -72,6 +85,7 @@ class CharacterLocalDataSourceImpl(
                 characterQueries
                     .insertCharacter(
                         id = null,
+                        requestCode = requestCode,
                         remoteId = it.id,
                         name = it.name,
                         description = it.description,
@@ -89,7 +103,7 @@ class CharacterLocalDataSourceImpl(
 
     }
 
-    override fun insertCharactersResource(
+    override suspend fun insertCharactersResource(
         resourceType: ResourceType,
         resourceId: Int,
         characters: List<CharacterDto>
@@ -116,11 +130,18 @@ class CharacterLocalDataSourceImpl(
         }
     }
 
-    override fun clearCharacters() {
-        characterQueries.clearCharacters()
+    override suspend fun clearCharactersByRequestCode(requestCode: String) {
+        characterQueries.clearRequestCharacters(requestCode)
     }
 
-    override fun clearCharactersResource(resourceType: ResourceType, resourceId: Int) {
+    override suspend fun clearCharactersByRemoteIdsAndRequestCode(
+        remoteIds: List<Int>,
+        requestCode: String
+    ) {
+        characterQueries.clearCharactersByRemoteIdsAndRequestCode(remoteIds, requestCode)
+    }
+
+    override suspend fun clearCharactersResource(resourceType: ResourceType, resourceId: Int) {
         characterResourceQueries.clearCharactersResource(
             resourceType = resourceType,
             resourceId = resourceId

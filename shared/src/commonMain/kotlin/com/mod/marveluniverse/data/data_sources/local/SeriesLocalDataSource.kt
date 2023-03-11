@@ -10,25 +10,28 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface SeriesLocalDataSource {
-    fun getSeries(): Flow<List<SeriesEntity>>
-    fun getSeriesById(id: Int): SeriesEntity
-    fun getSeriesByResource(
+    suspend fun getSeries(): Flow<List<SeriesEntity>>
+    suspend fun getSeriesByRequestCode(requestCode: String): Flow<List<SeriesEntity>>
+    suspend fun getSeriesById(id: Int): SeriesEntity
+    suspend fun getSeriesByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<SeriesResourceEntity>>
 
-    fun insertSeries(
+    suspend fun insertSeries(
+        requestCode: String,
         series: List<SeriesDto>
     )
 
-    fun insertSeriesResource(
+    suspend fun insertSeriesResource(
         resourceType: ResourceType,
         resourceId: Int,
         series: List<SeriesDto>
     )
 
-    fun clearSeries()
-    fun clearSeriesResource(resourceType: ResourceType, resourceId: Int)
+    suspend fun clearSeriesByRequestCode(requestCode: String)
+    suspend fun clearSeriesByRemoteIdsAndRequestCode(remoteIds: List<Int>, requestCode: String)
+    suspend fun clearSeriesResource(resourceType: ResourceType, resourceId: Int)
 }
 
 class SeriesLocalDataSourceImpl(
@@ -37,7 +40,7 @@ class SeriesLocalDataSourceImpl(
     private val seriesQueries = db.seriesQueries
     private val seriesResourceQueries = db.series_resourceQueries
 
-    override fun getSeries(): Flow<List<SeriesEntity>> {
+    override suspend fun getSeries(): Flow<List<SeriesEntity>> {
         return seriesQueries
             .getSeries()
             .asFlow()
@@ -46,13 +49,22 @@ class SeriesLocalDataSourceImpl(
             }
     }
 
-    override fun getSeriesById(id: Int): SeriesEntity {
+    override suspend fun getSeriesByRequestCode(requestCode: String): Flow<List<SeriesEntity>> {
+        return seriesQueries
+            .getSeriesByRequestCode(requestCode)
+            .asFlow()
+            .map { query ->
+                query.executeAsList()
+            }
+    }
+
+    override suspend fun getSeriesById(id: Int): SeriesEntity {
         return seriesQueries
             .getSeriesByRemoteId(id)
             .executeAsOne()
     }
 
-    override fun getSeriesByResource(
+    override suspend fun getSeriesByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<SeriesResourceEntity>> {
@@ -64,7 +76,8 @@ class SeriesLocalDataSourceImpl(
             }
     }
 
-    override fun insertSeries(
+    override suspend fun insertSeries(
+        requestCode: String,
         series: List<SeriesDto>
     ) {
         seriesQueries.transaction {
@@ -72,6 +85,7 @@ class SeriesLocalDataSourceImpl(
                 seriesQueries
                     .insertSeries(
                         id = null,
+                        requestCode = requestCode,
                         remoteId = it.id,
                         title = it.title,
                         description = it.description,
@@ -93,7 +107,7 @@ class SeriesLocalDataSourceImpl(
         }
     }
 
-    override fun insertSeriesResource(
+    override suspend fun insertSeriesResource(
         resourceType: ResourceType,
         resourceId: Int,
         series: List<SeriesDto>
@@ -126,11 +140,18 @@ class SeriesLocalDataSourceImpl(
         }
     }
 
-    override fun clearSeries() {
-        seriesQueries.clearSeries()
+    override suspend fun clearSeriesByRequestCode(requestCode: String) {
+        seriesQueries.clearRequestSeries(requestCode)
     }
 
-    override fun clearSeriesResource(resourceType: ResourceType, resourceId: Int) {
+    override suspend fun clearSeriesByRemoteIdsAndRequestCode(
+        remoteIds: List<Int>,
+        requestCode: String
+    ) {
+        seriesQueries.clearSeriesByRemoteIdsAndRequestCode(remoteIds, requestCode)
+    }
+
+    override suspend fun clearSeriesResource(resourceType: ResourceType, resourceId: Int) {
         seriesResourceQueries.clearSeriesResource(
             resourceType = resourceType,
             resourceId = resourceId

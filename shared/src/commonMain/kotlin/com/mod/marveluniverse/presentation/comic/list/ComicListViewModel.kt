@@ -7,6 +7,7 @@ import com.mod.marveluniverse.domain.repositories.ComicRepository
 import com.mod.marveluniverse.domain.utils.flows.toCommonStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -34,6 +35,7 @@ class ComicListViewModel(
         .toCommonStateFlow()
 
     private val _limit = 20
+    private var _requestDataJob: Job? = null
 
     init {
         requestComics(
@@ -106,6 +108,10 @@ class ComicListViewModel(
     }
 
     private fun requestComics(isRefresh: Boolean, isInit: Boolean, query: String?, sort: Sort) {
+        if (_requestDataJob?.isActive == true) {
+            _requestDataJob!!.cancel()
+        }
+
         _state.update {
             it.copy(
                 isFetchingComics = !isRefresh,
@@ -114,7 +120,7 @@ class ComicListViewModel(
             )
         }
 
-        viewModelScope.launch {
+        _requestDataJob = viewModelScope.launch {
             try {
                 comicRepository.requestComics(
                     query = query,

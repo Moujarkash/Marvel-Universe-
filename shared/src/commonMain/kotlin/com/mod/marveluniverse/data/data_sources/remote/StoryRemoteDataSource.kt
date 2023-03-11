@@ -4,6 +4,7 @@ import com.mod.marveluniverse.data.ApiConstants
 import com.mod.marveluniverse.data.dtos.ResponseWrapperDto
 import com.mod.marveluniverse.data.dtos.StoryDto
 import com.mod.marveluniverse.domain.entites.ResourceType
+import com.mod.marveluniverse.domain.entites.Sort
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -13,6 +14,7 @@ interface StoryRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
+        sort: Sort,
         etag: String? = null
     ): ResponseWrapperDto<StoryDto>
 
@@ -32,6 +34,7 @@ class StoryRemoteDataSourceImpl(
         query: String?,
         limit: Int,
         offset: Int,
+        sort: Sort,
         etag: String?
     ): ResponseWrapperDto<StoryDto> {
         return processRequest(
@@ -40,6 +43,7 @@ class StoryRemoteDataSourceImpl(
                     url(ApiConstants.BASE_URL + ApiConstants.API_V1 + "/stories")
                     parameter("limit", limit)
                     parameter("offset", offset)
+                    parameter("orderBy", "${if (sort == Sort.DESCENDING) "-" else ""}modified")
                     header("If-None-Match", etag)
                 }
             },

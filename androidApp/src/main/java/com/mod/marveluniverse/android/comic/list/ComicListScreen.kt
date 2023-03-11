@@ -61,6 +61,8 @@ fun ComicListScreen(
             }
         },
         floatingActionButton = {
+            if (state.isFetchingComics || state.comics.isEmpty()) return@Scaffold
+
             SortFloatingButton(
                 state.sort
             ) {
@@ -82,6 +84,7 @@ fun ComicListScreen(
             ) {
                 SearchView(
                     state = searchTextState,
+                    enabled = !state.isRefreshing && !state.isFetchingComics,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     onSearch = {
                         if (searchTextState.value.text == state.query) return@SearchView

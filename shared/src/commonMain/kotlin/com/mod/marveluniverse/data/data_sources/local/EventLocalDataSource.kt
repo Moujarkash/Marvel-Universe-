@@ -1,7 +1,7 @@
 package com.mod.marveluniverse.data.data_sources.local
 
 import app.cash.sqldelight.coroutines.asFlow
-import com.mod.marveluniverse.data.dtos.*
+import com.mod.marveluniverse.data.dtos.EventDto
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
 import com.mod.marveluniverse.domain.entites.ResourceType
 import database.event.EventEntity
@@ -10,25 +10,28 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface EventLocalDataSource {
-    fun getEvents(): Flow<List<EventEntity>>
-    fun getEventById(id: Int): EventEntity
-    fun getEventsByResource(
+    suspend fun getEvents(): Flow<List<EventEntity>>
+    suspend fun getEventsByRequestCode(requestCode: String): Flow<List<EventEntity>>
+    suspend fun getEventById(id: Int): EventEntity
+    suspend fun getEventsByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<EventResourceEntity>>
 
-    fun insertEvents(
+    suspend fun insertEvents(
+        requestCode: String,
         events: List<EventDto>
     )
 
-    fun insertEventsResource(
+    suspend fun insertEventsResource(
         resourceType: ResourceType,
         resourceId: Int,
         events: List<EventDto>
     )
 
-    fun clearEvents()
-    fun clearEventsResource(resourceType: ResourceType, resourceId: Int)
+    suspend fun clearEventsByRequestCode(requestCode: String)
+    suspend fun clearEventsByRemoteIdsAndRequestCode(remoteIds: List<Int>, requestCode: String)
+    suspend fun clearEventsResource(resourceType: ResourceType, resourceId: Int)
 }
 
 class EventLocalDataSourceImpl(
@@ -37,7 +40,7 @@ class EventLocalDataSourceImpl(
     private val eventQueries = db.eventQueries
     private val eventResourceQueries = db.event_resourceQueries
 
-    override fun getEvents(): Flow<List<EventEntity>> {
+    override suspend fun getEvents(): Flow<List<EventEntity>> {
         return eventQueries
             .getEvents()
             .asFlow()
@@ -46,13 +49,22 @@ class EventLocalDataSourceImpl(
             }
     }
 
-    override fun getEventById(id: Int): EventEntity {
+    override suspend fun getEventsByRequestCode(requestCode: String): Flow<List<EventEntity>> {
+        return eventQueries
+            .getEventsByRequestCode(requestCode)
+            .asFlow()
+            .map { query ->
+                query.executeAsList()
+            }
+    }
+
+    override suspend fun getEventById(id: Int): EventEntity {
         return eventQueries
             .getEventByRemoteId(id)
             .executeAsOne()
     }
 
-    override fun getEventsByResource(
+    override suspend fun getEventsByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<EventResourceEntity>> {
@@ -64,7 +76,8 @@ class EventLocalDataSourceImpl(
             }
     }
 
-    override fun insertEvents(
+    override suspend fun insertEvents(
+        requestCode: String,
         events: List<EventDto>
     ) {
         eventQueries.transaction {
@@ -72,6 +85,7 @@ class EventLocalDataSourceImpl(
                 eventQueries
                     .insertEvent(
                         id = null,
+                        requestCode = requestCode,
                         remoteId = it.id,
                         title = it.title,
                         description = it.description,
@@ -92,7 +106,7 @@ class EventLocalDataSourceImpl(
         }
     }
 
-    override fun insertEventsResource(
+    override suspend fun insertEventsResource(
         resourceType: ResourceType,
         resourceId: Int,
         events: List<EventDto>
@@ -124,11 +138,18 @@ class EventLocalDataSourceImpl(
         }
     }
 
-    override fun clearEvents() {
-        eventQueries.clearEvents()
+    override suspend fun clearEventsByRequestCode(requestCode: String) {
+        eventQueries.clearRequestEvents(requestCode)
     }
 
-    override fun clearEventsResource(resourceType: ResourceType, resourceId: Int) {
+    override suspend fun clearEventsByRemoteIdsAndRequestCode(
+        remoteIds: List<Int>,
+        requestCode: String
+    ) {
+        eventQueries.clearEventsByRemoteIdsAndRequestCode(remoteIds, requestCode)
+    }
+
+    override suspend fun clearEventsResource(resourceType: ResourceType, resourceId: Int) {
         eventResourceQueries.clearEventsResource(
             resourceType = resourceType,
             resourceId = resourceId

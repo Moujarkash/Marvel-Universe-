@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 fun SearchView(
     state: MutableState<TextFieldValue>,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onSearch: () -> Unit,
     onClear: () -> Unit
 ) {
@@ -34,6 +35,7 @@ fun SearchView(
 
     TextField(
         value = state.value,
+        enabled = enabled,
         onValueChange = { value ->
             state.value = value
         },

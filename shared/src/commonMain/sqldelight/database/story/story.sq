@@ -10,6 +10,7 @@ import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE storyEntity(
      id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+      requestCode TEXT NOT NULL,
      remoteId INTEGER AS Int NOT NULL,
      title TEXT NOT NULL,
      description TEXT NOT NULL,
@@ -29,6 +30,11 @@ SELECT  *
 FROM storyEntity
 WHERE remoteId = ?;
 
+getStoriesByRequestCode:
+SELECT *
+FROM storyEntity
+WHERE requestCode = ?;
+
 getStories:
 SELECT *
 FROM storyEntity;
@@ -37,6 +43,7 @@ insertStory:
 INSERT OR REPLACE
 INTO storyEntity(
     id,
+    requestCode,
     remoteId,
     title,
     description,
@@ -50,7 +57,12 @@ INTO storyEntity(
     creators,
     originalIssue
 )
-VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-clearStories:
-DELETE FROM storyEntity;
+clearRequestStories:
+DELETE FROM storyEntity
+WHERE requestCode = ?;
+
+clearStoriesByRemoteIdsAndRequestCode:
+DELETE FROM storyEntity
+WHERE remoteId IN ? AND requestCode = ?;

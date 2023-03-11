@@ -10,25 +10,29 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface CreatorLocalDataSource {
-    fun getCreators(): Flow<List<CreatorEntity>>
-    fun getCreatorById(id: Int): CreatorEntity
-    fun getCreatorsByResource(
+    suspend fun getCreators(): Flow<List<CreatorEntity>>
+    suspend fun getCreatorsByRequestCode(requestCode: String): Flow<List<CreatorEntity>>
+
+    suspend fun getCreatorById(id: Int): CreatorEntity
+    suspend fun getCreatorsByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<CreatorResourceEntity>>
 
-    fun insertCreators(
+    suspend fun insertCreators(
+        requestCode: String,
         creators: List<CreatorDto>
     )
 
-    fun insertCreatorsResource(
+    suspend fun insertCreatorsResource(
         resourceType: ResourceType,
         resourceId: Int,
         creators: List<CreatorDto>
     )
 
-    fun clearCreators()
-    fun clearCreatorsResource(resourceType: ResourceType, resourceId: Int)
+    suspend fun clearCreatorsByRequestCode(requestCode: String)
+    suspend fun clearCreatorsByRemoteIdsAndRequestCode(remoteIds: List<Int>, requestCode: String)
+    suspend fun clearCreatorsResource(resourceType: ResourceType, resourceId: Int)
 }
 
 class CreatorLocalDataSourceImpl(
@@ -37,7 +41,7 @@ class CreatorLocalDataSourceImpl(
     private val creatorQueries = db.creatorQueries
     private val creatorResourceQueries = db.creator_resourceQueries
 
-    override fun getCreators(): Flow<List<CreatorEntity>> {
+    override suspend fun getCreators(): Flow<List<CreatorEntity>> {
         return creatorQueries
             .getCreators()
             .asFlow()
@@ -46,13 +50,22 @@ class CreatorLocalDataSourceImpl(
             }
     }
 
-    override fun getCreatorById(id: Int): CreatorEntity {
+    override suspend fun getCreatorsByRequestCode(requestCode: String): Flow<List<CreatorEntity>> {
+        return creatorQueries
+            .getCreatorsByRequestCode(requestCode)
+            .asFlow()
+            .map { query ->
+                query.executeAsList()
+            }
+    }
+
+    override suspend fun getCreatorById(id: Int): CreatorEntity {
         return creatorQueries
             .getCreatorByRemoteId(id)
             .executeAsOne()
     }
 
-    override fun getCreatorsByResource(
+    override suspend fun getCreatorsByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<CreatorResourceEntity>> {
@@ -64,7 +77,8 @@ class CreatorLocalDataSourceImpl(
             }
     }
 
-    override fun insertCreators(
+    override suspend fun insertCreators(
+        requestCode: String,
         creators: List<CreatorDto>
     ) {
         creatorQueries.transaction {
@@ -72,6 +86,7 @@ class CreatorLocalDataSourceImpl(
                 creatorQueries
                     .insertCreator(
                         id = null,
+                        requestCode = requestCode,
                         remoteId = it.id,
                         firstName = it.firstName,
                         middleName = it.middleName,
@@ -90,7 +105,7 @@ class CreatorLocalDataSourceImpl(
         }
     }
 
-    override fun insertCreatorsResource(
+    override suspend fun insertCreatorsResource(
         resourceType: ResourceType,
         resourceId: Int,
         creators: List<CreatorDto>
@@ -120,11 +135,18 @@ class CreatorLocalDataSourceImpl(
         }
     }
 
-    override fun clearCreators() {
-        creatorQueries.clearCreators()
+    override suspend fun clearCreatorsByRequestCode(requestCode: String) {
+        creatorQueries.clearRequestCreators(requestCode)
     }
 
-    override fun clearCreatorsResource(resourceType: ResourceType, resourceId: Int) {
+    override suspend fun clearCreatorsByRemoteIdsAndRequestCode(
+        remoteIds: List<Int>,
+        requestCode: String
+    ) {
+        creatorQueries.clearCreatorsByRemoteIdsAndRequestCode(remoteIds, requestCode)
+    }
+
+    override suspend fun clearCreatorsResource(resourceType: ResourceType, resourceId: Int) {
         creatorResourceQueries.clearCreatorsResource(
             resourceType = resourceType,
             resourceId = resourceId

@@ -11,7 +11,7 @@ import kotlinx.serialization.UseSerializers
 data class SeriesDto(
     val id: Int,
     val title: String,
-    val description: String,
+    val description: String = "",
     val urls: List<UrlDto>,
     val startYear: Int,
     val endYear: Int,

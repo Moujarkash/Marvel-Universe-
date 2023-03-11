@@ -14,7 +14,10 @@ data class StoryDto(
     val description: String,
     val type: String,
     val modified: LocalDateTime,
-    val thumbnail: ImageDto,
+    val thumbnail: ImageDto = ImageDto(
+        path = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available",
+        extension = "jpg"
+    ),
     val comics: ComicsResourceListDto,
     val series: SeriesResourceListDto,
     val events: EventsResourceListDto,

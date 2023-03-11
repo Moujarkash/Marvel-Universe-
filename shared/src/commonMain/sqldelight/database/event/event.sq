@@ -12,13 +12,14 @@ import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE eventEntity(
         id INTEGER AS Int NOT NULL PRIMARY KEY AUTOINCREMENT,
+          requestCode TEXT NOT NULL,
         remoteId INTEGER AS Int NOT NULL,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         urls TEXT AS List<UrlDto> NOT NULL,
         modified TEXT AS LocalDateTime NOT NULL,
-        start TEXT AS LocalDateTime NOT NULL,
-        end TEXT AS LocalDateTime NOT NULL,
+        start TEXT AS LocalDateTime,
+        end TEXT AS LocalDateTime,
         thumbnail TEXT AS ImageDto NOT NULL,
         comics TEXT AS ComicsResourceListDto NOT NULL,
         series TEXT AS SeriesResourceListDto NOT NULL,
@@ -34,6 +35,11 @@ SELECT  *
 FROM eventEntity
 WHERE remoteId = ?;
 
+getEventsByRequestCode:
+SELECT *
+FROM eventEntity
+WHERE requestCode = ?;
+
 getEvents:
 SELECT *
 FROM eventEntity;
@@ -42,6 +48,7 @@ insertEvent:
 INSERT OR REPLACE
 INTO eventEntity(
     id,
+    requestCode,
     remoteId,
     title,
     description,
@@ -58,7 +65,12 @@ INTO eventEntity(
     next,
     previous
 )
-VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-clearEvents:
-DELETE FROM eventEntity;
+clearRequestEvents:
+DELETE FROM eventEntity
+WHERE requestCode = ?;
+
+clearEventsByRemoteIdsAndRequestCode:
+DELETE FROM eventEntity
+WHERE remoteId IN ? AND requestCode = ?;

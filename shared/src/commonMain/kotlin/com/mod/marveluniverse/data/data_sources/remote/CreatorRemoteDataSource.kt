@@ -4,6 +4,7 @@ import com.mod.marveluniverse.data.ApiConstants
 import com.mod.marveluniverse.data.dtos.CreatorDto
 import com.mod.marveluniverse.data.dtos.ResponseWrapperDto
 import com.mod.marveluniverse.domain.entites.ResourceType
+import com.mod.marveluniverse.domain.entites.Sort
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -13,6 +14,7 @@ interface CreatorRemoteDataSource {
         query: String?,
         limit: Int,
         offset: Int,
+        sort: Sort,
         etag: String? = null
     ): ResponseWrapperDto<CreatorDto>
 
@@ -32,6 +34,7 @@ class CreatorRemoteDataSourceImpl(
         query: String?,
         limit: Int,
         offset: Int,
+        sort: Sort,
         etag: String?
     ): ResponseWrapperDto<CreatorDto> {
         return processRequest(
@@ -41,6 +44,7 @@ class CreatorRemoteDataSourceImpl(
                     parameter("nameStartsWith", query)
                     parameter("limit", limit)
                     parameter("offset", offset)
+                    parameter("orderBy", "${if (sort == Sort.DESCENDING) "-" else ""}firstName")
                     header("If-None-Match", etag)
                 }
             },

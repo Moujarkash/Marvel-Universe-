@@ -10,25 +10,28 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface StoryLocalDataSource {
-    fun getStories(): Flow<List<StoryEntity>>
-    fun getStoryById(id: Int): StoryEntity
-    fun getStoriesByResource(
+    suspend fun getStories(): Flow<List<StoryEntity>>
+    suspend fun getStoriesByRequestCode(requestCode: String): Flow<List<StoryEntity>>
+    suspend fun getStoryById(id: Int): StoryEntity
+    suspend fun getStoriesByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<StoryResourceEntity>>
 
-    fun insertStories(
+    suspend fun insertStories(
+        requestCode: String,
         stories: List<StoryDto>
     )
 
-    fun insertStoriesResource(
+    suspend fun insertStoriesResource(
         resourceType: ResourceType,
         resourceId: Int,
         stories: List<StoryDto>
     )
 
-    fun clearStories()
-    fun clearStoriesResource(resourceType: ResourceType, resourceId: Int)
+    suspend fun clearStoriesByRequestCode(requestCode: String)
+    suspend fun clearStoriesByRemoteIdsAndRequestCode(remoteIds: List<Int>, requestCode: String)
+    suspend fun clearStoriesResource(resourceType: ResourceType, resourceId: Int)
 }
 
 class StoryLocalDataSourceImpl(
@@ -37,7 +40,7 @@ class StoryLocalDataSourceImpl(
     private val storyQueries = db.storyQueries
     private val storyResourceQueries = db.story_resourceQueries
 
-    override fun getStories(): Flow<List<StoryEntity>> {
+    override suspend fun getStories(): Flow<List<StoryEntity>> {
         return storyQueries
             .getStories()
             .asFlow()
@@ -46,13 +49,22 @@ class StoryLocalDataSourceImpl(
             }
     }
 
-    override fun getStoryById(id: Int): StoryEntity {
+    override suspend fun getStoriesByRequestCode(requestCode: String): Flow<List<StoryEntity>> {
+        return storyQueries
+            .getStoriesByRequestCode(requestCode)
+            .asFlow()
+            .map { query ->
+                query.executeAsList()
+            }
+    }
+
+    override suspend fun getStoryById(id: Int): StoryEntity {
         return storyQueries
             .getStoryByRemoteId(id)
             .executeAsOne()
     }
 
-    override fun getStoriesByResource(
+    override suspend fun getStoriesByResource(
         resourceType: ResourceType,
         resourceId: Int
     ): Flow<List<StoryResourceEntity>> {
@@ -64,7 +76,8 @@ class StoryLocalDataSourceImpl(
             }
     }
 
-    override fun insertStories(
+    override suspend fun insertStories(
+        requestCode: String,
         stories: List<StoryDto>
     ) {
         storyQueries.transaction {
@@ -72,6 +85,7 @@ class StoryLocalDataSourceImpl(
                 storyQueries
                     .insertStory(
                         id = null,
+                        requestCode = requestCode,
                         remoteId = it.id,
                         title = it.title,
                         description = it.description,
@@ -89,7 +103,7 @@ class StoryLocalDataSourceImpl(
         }
     }
 
-    override fun insertStoriesResource(
+    override suspend fun insertStoriesResource(
         resourceType: ResourceType,
         resourceId: Int,
         stories: List<StoryDto>
@@ -118,11 +132,18 @@ class StoryLocalDataSourceImpl(
         }
     }
 
-    override fun clearStories() {
-        storyQueries.clearStories()
+    override suspend fun clearStoriesByRequestCode(requestCode: String) {
+        storyQueries.clearRequestStories(requestCode)
     }
 
-    override fun clearStoriesResource(resourceType: ResourceType, resourceId: Int) {
+    override suspend fun clearStoriesByRemoteIdsAndRequestCode(
+        remoteIds: List<Int>,
+        requestCode: String
+    ) {
+        storyQueries.clearStoriesByRemoteIdsAndRequestCode(remoteIds, requestCode)
+    }
+
+    override suspend fun clearStoriesResource(resourceType: ResourceType, resourceId: Int) {
         storyResourceQueries.clearStoriesResource(
             resourceType = resourceType,
             resourceId = resourceId

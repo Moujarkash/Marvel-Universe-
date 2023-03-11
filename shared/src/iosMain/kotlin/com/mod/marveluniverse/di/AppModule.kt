@@ -1,27 +1,13 @@
 package com.mod.marveluniverse.di
 
-import app.cash.sqldelight.EnumColumnAdapter
-import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import com.mod.marveluniverse.data.config.DatabaseDriverFactory
 import com.mod.marveluniverse.data.config.HttpClientFactory
 import com.mod.marveluniverse.data.data_sources.local.*
 import com.mod.marveluniverse.data.data_sources.remote.*
-import com.mod.marveluniverse.data.db_adapters.*
+import com.mod.marveluniverse.data.repositories.*
 import com.mod.marveluniverse.database.MarvelUniverseDatabase
-import com.mod.marveluniverse.domain.entites.ResourceType
-import database.RequestEntity
-import database.character.CharacterEntity
-import database.character.CharacterResourceEntity
-import database.comic.ComicEntity
-import database.comic.ComicResourceEntity
-import database.creator.CreatorEntity
-import database.creator.CreatorResourceEntity
-import database.event.EventEntity
-import database.event.EventResourceEntity
-import database.series.SeriesEntity
-import database.series.SeriesResourceEntity
-import database.story.StoryEntity
-import database.story.StoryResourceEntity
+import com.mod.marveluniverse.domain.repositories.*
+import com.mod.marveluniverse.presentation.comic.list.ComicListViewModel
 
 class AppModule {
     private val appDatabase: MarvelUniverseDatabase by lazy {
@@ -103,6 +89,48 @@ class AppModule {
     val storyRemoteDataSource: StoryRemoteDataSource by lazy {
         StoryRemoteDataSourceImpl(
             httpClient = HttpClientFactory().create()
+        )
+    }
+
+    val comicRepository: ComicRepository by lazy {
+        ComicRepositoryImpl(
+            requestLocalDataSource, comicLocalDataSource, comicRemoteDataSource
+        )
+    }
+
+    val characterRepository: CharacterRepository by lazy {
+        CharacterRepositoryImpl(
+            requestLocalDataSource, characterLocalDataSource, characterRemoteDataSource
+        )
+    }
+
+    val creatorRepository: CreatorRepository by lazy {
+        CreatorRepositoryImpl(
+            requestLocalDataSource, creatorLocalDataSource, creatorRemoteDataSource
+        )
+    }
+
+    val eventRepository: EventRepository by lazy {
+        EventRepositoryImpl(
+            requestLocalDataSource, eventLocalDataSource, eventRemoteDataSource
+        )
+    }
+
+    val seriesRepository: SeriesRepository by lazy {
+        SeriesRepositoryImpl(
+            requestLocalDataSource, seriesLocalDataSource, seriesRemoteDataSource
+        )
+    }
+
+    val storyRepository: StoryRepository by lazy {
+        StoryRepositoryImpl(
+            requestLocalDataSource, storyLocalDataSource, storyRemoteDataSource
+        )
+    }
+
+    val comicListViewModel: ComicListViewModel by lazy {
+        ComicListViewModel(
+            comicRepository, null
         )
     }
 }
